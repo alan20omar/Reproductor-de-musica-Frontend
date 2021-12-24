@@ -1,1 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/scss/bootstrap";
+html, .body{
+    margin: 0px;
+    padding: 0px;
+}
+// html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.cursor-pointer{
+    cursor: pointer;
+}
+.delete-button{
+    color: rgb(204, 32, 32);
+    transition-duration: 0.3s;
+}
+.delete-button:hover{
+    transform: scale(1.5);
+}
+.options-button{
+    margin-left: 0.25rem;
+    border-radius: 50%;
+    transition-duration: 0.3s;
+}
+.options-button:hover{
+    background-color: rgb(0, 0, 0, 0.1);
+}
+// .sortOptions{
+//     z-index: 5;
+//     left: -1%;
+//     top: 100%;
+//     width: 150%;
+//     // visibility: hidden;
+//     min-width: 100px;
+// }
+// .sortOptions:hover{
+//     visibility: visible;
+// }
+.size-100-100{
+    width: 100px;
+    height: 100px;
+}
+.size-75-75{
+    width: 75px;
+    height: 75px;
+}
+.size-600-600{
+    width: 600px;
+    height: 600px;
+}
+.margin-top-30px{
+    margin-top: 30px;
+}
+.margin-bottom-30px{
+    margin-bottom: 30px;
+}
+.margin-bottom-50px{
+    margin-bottom: 50px;
+}
+.max-height-1000{
+    max-height: 1000px;
+}
+.max-height-750{
+    max-height: 750px;
+}
+.height-90percent{
+    height: 90%;
+}

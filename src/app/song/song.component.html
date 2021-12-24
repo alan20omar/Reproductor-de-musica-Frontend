@@ -1,0 +1,97 @@
+<div class="row mt-5">
+    <h2 class="m-0 text-center">Canciones</h2>
+    <!-- Controles de la lista de canciones-->
+    <div class="col-12">
+        <div class="row p-3 my-3 bg-dark align-items-center">
+            <!-- Play all -->
+            <div (click)="playAllSongs()" class="col-4 col-md-3 col-lg-1 col-xl-2">
+                <div class="w-100 p-2 btn btn-secondary" title="Reproducir todos">
+                    <fa-icon [icon]="['far','play-circle']" size="lg" class="mx-2"></fa-icon>
+                    <span class="d-none d-md-inline d-lg-none d-xl-inline">Play all</span>
+                </div>
+            </div>
+            <!-- Play all random -->
+            <div (click)="playAllRandom()" class="col-4 col-md-3 col-lg-1 col-xl-2">
+                <div class="w-100 p-2 btn btn-secondary" title="Reproducir todos aletoriamente">
+                    <fa-icon [icon]="['fas','random']" size="lg" class="mx-2"></fa-icon>
+                    <span class="d-none d-md-inline d-lg-none d-xl-inline">Play random</span>
+                </div>
+            </div>
+            <!-- Sort list of songs -->
+            <div class="col-4 col-md-2 col-lg-1">
+                <ng-template [ngIf]="sort=='a-z'" [ngIfElse]="sortZA">
+                    <div (click)="changeSortList('z-a')" class="w-100 p-2 btn btn-secondary" title="Reproducir todos aletoriamente">
+                        <fa-icon [icon]="['fas','sort-alpha-down']" size="lg" class="mx-2"></fa-icon>
+                    </div>
+                </ng-template>
+                <ng-template #sortZA>
+                    <div (click)="changeSortList('a-z')" class="w-100 p-2 btn btn-secondary" title="Reproducir todos aletoriamente">
+                        <fa-icon [icon]="['fas','sort-alpha-down-alt']" size="lg" class="mx-2"></fa-icon>
+                    </div>
+                </ng-template>
+            </div>
+            <!-- <div class="col-2 p-2 position-relative" title = 'Ordenar por'>
+                <div class="width-100percent height-90percent btn btn-secondary">
+                    <fa-icon [icon]="['fas','list-ul']" (hover)="$event.stopPropagation()" (click)="$event.stopPropagation()" size="lg"
+                        title="Reproducir todos aletoriamente" class="mx-2"></fa-icon>
+                    <span>Sort</span>
+                </div>
+                <div class="sortOptions position-absolute bg-dark bg-gradient">
+                    <div class="row p-2 border-bottom border-white">
+                        <div class="col-10">
+                            <label class="" for="flexRadioDefault1">Default radio</label>
+                        </div>
+                        <div class="col-2">
+                            <input class="ml-auto mr-2 form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Default checked radio
+                        </label>
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                    </div>
+                </div>
+            </div> -->
+            <!-- Search song -->
+            <div class="col-12 mt-3 col-md-4 m-md-0 col-xl-3">
+                <div class="input-group" title="Buscar">
+                    <label class="input-group-text" for="buscar1"><fa-icon [icon]="['fas','search']" size="lg"></fa-icon></label>
+                    <input #searchSong (input)="inputSearchSongChange(searchSong)" type="text" class="border-0 form-control" placeholder="Song" id="buscar1">
+                    <label #cleanSearchSong (click)="clickCleanSearchSong(searchSong)" title="limpiar" class="d-none border-0 bg-white input-group-text" for="buscar1"><fa-icon [icon]="['fas','trash-alt']" size="lg"></fa-icon></label>
+                </div>
+            </div>
+            <!-- Upload song -->
+            <div class="col-12 mt-3 col-lg-5 m-lg-0 col-xl-4">
+                <div class="input-group">
+                    <input #newSong type="file" multiple="multiple" accept=".mp3" id="uploadSong" class="form-control">
+                    <button (click)="addSong(newSong)" class="btn btn-primary" type="button">Agragar</button>
+                </div>
+            </div>
+        </div>    
+    </div>
+    <!-- Fin controles de la lista de canciones-->
+    <div class="col-12">
+        <ul class="songsList p-0 list-group overflow-auto">
+            <label  for="uploadSong" *ngIf="getSongList().length==0" class="alert alert-info text-center" role="alert">No hay canciones disponibles! Haz click para agregar</label>
+            <li *ngFor="let song of getSongList(sort,filter)" (click)="addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active"  [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
+                <div class="row">
+                    <!-- Image -->
+                    <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center">
+                        <img [src]="song.imagePath" class="rounded image1" />
+                    </div>
+                    <div class="col-7 col-sm-8 col-lg-9 col-xl-10">
+                        <!-- Title -->
+                        <h3 class="">{{song.title}}</h3>
+                        <!-- Artist -->
+                        <span>{{song.artist}}</span>
+                    </div>
+                    <div class="col-2 col-xl-1">
+                        <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()" size="lg" title="Opciones {{song.title}}" class="options-button px-3 py-2 float-end"></fa-icon>
+                        <fa-icon [icon]="['fas','minus-square']" (click)="deleteSong(song);$event.stopPropagation()" size="lg" title="Eliminar {{song.title}}" class="mt-2 d-none d-md-inline delete-button float-end"></fa-icon>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+.img-user{
+    width: 40%;
+    max-width: 400px;
+    min-width: 200px;
+    max-height: 600px;
+    // border-radius: 40px;
+}
+.img-user:hover + .imageCenter, .imageCenter:hover{
+    visibility: visible;
+    opacity: 1;
+}
+.imageCenter{
+    background-color: rgba(128, 128, 128,0.3);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 8%;
+    height: 20%;
+    min-width: 100px;
+    min-height: 100px;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+    font-weight: bold;
+    font-size: larger;
+}

@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="navbar-brand" >MySongs</div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <div (click)="changeUrl('song')" [class.active]="urlActiva=='song'" class="nav-link cursor-pointer">Songs</div>
+                <div (click)="changeUrl('album')" [class.active]="urlActiva=='album'" class="nav-link cursor-pointer">Albums</div>
+                <div (click)="changeUrl('artist')" [class.active]="urlActiva=='artist'" class="nav-link cursor-pointer">Artists</div>
+                <div (click)="changeUrl('genre')" [class.active]="urlActiva=='genre'" class="nav-link cursor-pointer">Genre</div>
+            </div>
+        </div>
+    </div>
+</nav>

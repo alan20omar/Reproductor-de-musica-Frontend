@@ -1,0 +1,38 @@
+.playerImage{
+    max-height: 600px;
+    width: 80%;
+}
+.tailList{
+    height: 75%;
+}
+.tailList1{
+    position: absolute;
+}
+.playerAudio{
+    width: 95%;
+}
+.image2{
+    width: 65px;
+    height: 65px;
+}
+#buscarTailSong:focus{
+    box-shadow: none !important;
+}
+
+// sm
+@media (max-width: 767px){
+    .tailList{
+        height: 400px !important;
+    }
+    .tailList1{
+        position: relative;
+    }
+}
+
+// md
+@media (max-width: 991px){
+    .tailList{
+        height: 65%;
+    }
+}
+

@@ -1,0 +1,176 @@
+<div class="container my-5">
+    <form (submit)="sendData()" [formGroup]="updateUserForm">
+        <div class="row justify-content-center position-relative">
+            <img #imagenPerfil class="img-user" [src]="newImage||user.photo" alt="">
+            <button mat-fab (click)="selectImage.click()" type="button"
+                class="imageCenter position-absolute">Cambiar</button>
+            <input #selectImage (change)="changePerfilImage(selectImage)" type="file" accept=".png,.jpg,.jpeg"
+                class="d-none">
+        </div>
+        <div *ngIf="updateUserForm.controls.photo.value" class="w-100 mt-4 text-center">
+            <button mat-raised-button [disabled]="updateUserForm.invalid" color="primary" type="submit"
+                class="mx-auto">Aplicar cambios</button>
+        </div>
+        <h3 class="mt-3">Datos personales</h3>
+        <mat-divider></mat-divider>
+        <div class="row mt-3">
+            <div class="mb-2 col-12 col-sm-6 col-md-4">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Nombre(s)</mat-label>
+                    <input matInput formControlName="firstName">
+                    <mat-error *ngIf="updateUserForm.get('firstName')?.errors?.['required']">Por favor ingreasa un
+                        nombre valido</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Apellidos</mat-label>
+                    <input matInput formControlName="lastName">
+                    <mat-error *ngIf="updateUserForm.controls.lastName.errors?.required">Por favor ingreasa un apellido
+                        valido</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-md-4">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Correo</mat-label>
+                    <input type="email" matInput placeholder="Ej. baktún@example.com" formControlName="email">
+                    <mat-error *ngIf="updateUserForm.controls.email.errors?.required">Por favor ingreasa un correo
+                    </mat-error>
+                    <mat-error *ngIf="updateUserForm.controls.email.errors?.email">Por favor ingreasa un correo valido
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- <button mat-raised-button color="primary" (click)="isChangePass=!isChangePass" class="mb-3">Cambiar contraseña</button>
+            <div [class.show]="isChangePass" class="row collapse">
+                <div class="col">
+                    <mat-form-field class="w-100 example-full-width" appearance="fill">
+                        <mat-label>Contraseña actual</mat-label>
+                        <input #currentPass type="password" matInput value="">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="w-100 example-full-width" appearance="fill">
+                        <mat-label>Contraseña nueva</mat-label>
+                        <input #newPass1 type="password" matInput value="">
+                    </mat-form-field>
+                </div>
+                <div *ngIf="newPass1.value" class="col-4">
+                    <mat-form-field class="w-100 example-full-width" appearance="fill">
+                        <mat-label>Confirma la nueva contraseña</mat-label>
+                        <input #newPass2 type="password" matInput value="">
+                    </mat-form-field>
+                </div>
+                <button mat-raised-button color="primary" (click)="changepass()" class="mb-3">Cambiar contraseña</button>
+            </div> -->
+        <h3>Dirección</h3>
+        <mat-divider></mat-divider>
+        <div class="row mt-3">
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Nombre de quien recibe</mat-label>
+                    <input matInput formControlName="destinatario">
+                    <mat-error *ngIf="updateUserForm.controls.destinatario.errors?.required">Por favor ingreasa un
+                        nombre</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Telefono</mat-label>
+                    <input matInput formControlName="telefono">
+                    <mat-error *ngIf="updateUserForm.controls.telefono.errors?.required">Por favor ingreasa un telefono
+                    </mat-error>
+                    <mat-error *ngIf="updateUserForm.controls.telefono.errors?.pattern">Debe contener exactamente 10
+                        digitos</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Pais</mat-label>
+                    <input matInput formControlName="pais">
+                    <mat-error *ngIf="updateUserForm.controls.pais.errors?.required">Por favor ingreasa un Pais
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Codigo Postal</mat-label>
+                    <input matInput formControlName="cp">
+                    <mat-error *ngIf="updateUserForm.controls.cp.errors?.required">Por favor ingreasa un codigo postal
+                    </mat-error>
+                    <mat-error *ngIf="updateUserForm.controls.cp.errors?.pattern">Debe contener exactamente 5 digitos
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Estado</mat-label>
+                    <input matInput formControlName="estado">
+                    <mat-error *ngIf="updateUserForm.controls.estado.errors?.required">Por favor ingreasa un Estado
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Municipio / Alcaldia</mat-label>
+                    <input matInput formControlName="municipioAlcaldia">
+                    <mat-error *ngIf="updateUserForm.controls.municipioAlcaldia.errors?.required">Por favor ingreasa un
+                        Municipio o Alcaldia</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Colonia</mat-label>
+                    <input matInput formControlName="colonia">
+                    <mat-error *ngIf="updateUserForm.controls.colonia.errors?.required">Por favor ingreasa una Colonia
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Calle</mat-label>
+                    <input matInput formControlName="calle">
+                    <mat-error *ngIf="updateUserForm.controls.calle.errors?.required">Por favor ingreasa una Calle
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Entre calle</mat-label>
+                    <input matInput formControlName="entreCalle1" placeholder="Opcional">
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Y entre calle</mat-label>
+                    <input matInput formControlName="entreCalle2" placeholder="Opcional">
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Número exterior</mat-label>
+                    <input matInput formControlName="numeroExterior" placeholder="SN">
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Número interior</mat-label>
+                    <input matInput formControlName="numeroInterior" placeholder="SN">
+                    <mat-error *ngIf="true">
+                        Please enter a valid email address
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Detalles adicionales</mat-label>
+                    <textarea matInput formControlName="detallesDeEntrega" placeholder="Opcional"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="w-100 text-center">
+            <button mat-raised-button [disabled]="updateUserForm.invalid" color="primary" type="submit"
+                class="mx-auto">Aplicar cambios</button>
+        </div>
+    </form>
+</div>
