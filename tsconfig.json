@@ -6,6 +6,14 @@
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    
+    // whatWhen working with classes which use inheritance, it’s possible for a sub-class to get “out of sync” with 
+    // the functions it overloads when they are renamed in the base class.
+    "noImplicitOverride": true,
+    // This setting ensures consistency between accessing a field via the “dot” 
+    // (obj.key) syntax, and “indexed” (obj["key"]) and the way which the property is declared in the type.
+    "noPropertyAccessFromIndexSignature": true,
+
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,

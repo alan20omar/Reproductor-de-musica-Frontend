@@ -2,9 +2,9 @@
     <!-- Reproductor de canciones -->
     <div class="col-12 col-md-6 col-lg-7 text-center align-self-center">
         <!-- Image -->
-        <img [src]="pathActualImage" class="rounded playerImage" />
-        <h3>{{titleActualSong}}</h3>
-        <audio #player (ended)="playNextSong()" autoplay controls [src]="pathActualSong" class="playerAudio"></audio>
+        <img [src]="actualSong.song.imagePath" class="rounded playerImage" />
+        <h3>{{actualSong.song.title}}</h3>
+        <audio #player (ended)="playNextSong()" autoplay controls [src]="actualSong.song.filePath" class="playerAudio"></audio>
     </div>
     <div class="mt-3 col-12 col-md-6 mt-md-0 col-lg-5">
         <h2 class="text-center">Canciones en cola</h2>
@@ -41,11 +41,14 @@
             <ul class="tailList1 w-100 list-group">
                 <div *ngIf="playerTail.length==0&&playerTailTemp.length==0" class="alert alert-info text-center" role="alert">¡No hay canciones en cola!</div>
                 <div *ngIf="playerTail.length==0&&playerTailTemp.length!=0" class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con {{searchSongPlayer.value}}!</div>
-                <li *ngFor="let song of playerTail" (click)="reproducirSong(song.index)" [class.active]="song.index==indexActualSong" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
+                <li *ngFor="let song of playerTail" (click)="reproducirSong(song)" [class.active]="song.index==actualSong.index" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
                     <div class="row">
                         <!-- Image -->
                         <div class="col-3 col-sm-2 col-md-3 col-xl-2 text-center">
-                            <img [src]="song.song.imagePath" class="rounded image2" />
+                            <div class="image2 rounded position-relative">
+                                <img [src]="song.song.imagePath" class="w-100 h-100"/>
+                                <mat-spinner *ngIf="song.isLoading" diameter="50" class="spiner position-absolute"></mat-spinner>
+                            </div>
                         </div>
                         <div class="col-7 col-sm-7 col-md-8 col-xl-7">
                             <!-- Title -->
@@ -54,7 +57,25 @@
                             <span>{{song.song.artist}}</span>
                         </div>
                         <div class="col-2 col-sm-3 col-md-1 col-xl-3">
-                            <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()" size="lg" title="Opciones {{song.song.title}}" class="options-button px-3 py-2 float-end"></fa-icon>
+                            <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()" [matMenuTriggerFor]="optionsMenuPlayer" size="lg" title="Opciones {{song.song.title}}" class="options-button px-3 py-2 float-end"></fa-icon>
+                            <mat-menu #optionsMenuPlayer="matMenu" xPosition="before" yPosition="above">
+                                <button mat-menu-item (click)="$event.stopPropagation()" title="Editar {{song.song.title}}">
+                                    <fa-icon [icon]="['fas','edit']" size="lg" class="optionsIcon"></fa-icon>
+                                    <span>Editar</span>
+                                </button>
+                                <button mat-menu-item (click)="$event.stopPropagation()" title="Añadir {{song.song.title}} a favorito">
+                                    <fa-icon [icon]="['fas','heart']" size="lg" class="optionsIcon"></fa-icon>
+                                    <span>Favorito</span>
+                                </button>
+                                <button mat-menu-item (click)="deleteSongTail(song.index)" title="Quitar {{song.song.title}} de la cola">
+                                    <fa-icon [icon]="['fas','minus-square']" size="lg" class="optionsIcon"></fa-icon>
+                                    <span>Quitar de la cola</span>
+                                </button>
+                                <button mat-menu-item (click)="deleteSong(song.song)" title="Eliminar {{song.song.title}}">
+                                    <fa-icon [icon]="['fas','trash-alt']" size="lg" class="optionsIcon"></fa-icon>
+                                    <span>Eliminar</span>
+                                </button>
+                            </mat-menu>
                             <fa-icon [icon]="['fas','minus-square']" (click)="deleteSongTail(song.index);$event.stopPropagation()" size="lg" title="Quitar de la cola {{song.song.title}}" class="mt-2 d-none d-sm-inline d-md-none d-xl-inline float-end delete-button"></fa-icon>
                         </div>
                     </div>

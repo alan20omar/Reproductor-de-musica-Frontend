@@ -1,4 +1,7 @@
 <div class="row mt-5">
+    <div class="my-3">
+        <div #uploadMessages></div>
+    </div>
     <h2 class="m-0 text-center">Canciones</h2>
     <!-- Controles de la lista de canciones-->
     <div class="col-12">
@@ -74,11 +77,12 @@
     <div class="col-12">
         <ul class="songsList p-0 list-group overflow-auto">
             <label  for="uploadSong" *ngIf="getSongList().length==0" class="alert alert-info text-center" role="alert">No hay canciones disponibles! Haz click para agregar</label>
-            <li *ngFor="let song of getSongList(sort,filter)" (click)="addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active"  [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
+            <li *ngFor="let song of getSongList(sort,filter)" (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active"  [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
                 <div class="row">
                     <!-- Image -->
                     <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center">
-                        <img [src]="song.imagePath" class="rounded image1" />
+                        <!-- <img loading="lazy" [src]="song.imagePath" class="rounded image1" /> -->
+                        <img loading="lazy" [src]="song.imagePath||this.getApiBaseUrl()+'/default.png'" class="rounded image1" />
                     </div>
                     <div class="col-7 col-sm-8 col-lg-9 col-xl-10">
                         <!-- Title -->
@@ -87,8 +91,30 @@
                         <span>{{song.artist}}</span>
                     </div>
                     <div class="col-2 col-xl-1">
-                        <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()" size="lg" title="Opciones {{song.title}}" class="options-button px-3 py-2 float-end"></fa-icon>
-                        <fa-icon [icon]="['fas','minus-square']" (click)="deleteSong(song);$event.stopPropagation()" size="lg" title="Eliminar {{song.title}}" class="mt-2 d-none d-md-inline delete-button float-end"></fa-icon>
+                        <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()" [matMenuTriggerFor]="optionsMenu" size="lg" title="Opciones {{song.title}}" class="options-button px-3 py-2 float-end"></fa-icon>
+                        <mat-menu #optionsMenu="matMenu" xPosition="before" yPosition="above">
+                            <button mat-menu-item (click)="playSong(song)" title="Reproducir {{song.title}}">
+                                <fa-icon [icon]="['fas','play']" size="lg" class="optionsIcon"></fa-icon>
+                                <span>Reproducir</span>
+                            </button>
+                            <button mat-menu-item (click)="playNextSong(song)" title="Reproducir {{song.title}} a continuación">
+                                <fa-icon [icon]="['fas','step-forward']" size="lg" class="optionsIcon"></fa-icon>
+                                <span>Reproducir a continuación</span>
+                            </button>
+                            <button mat-menu-item (click)="openEditSong(song)" title="Editar {{song.title}}">
+                                <fa-icon [icon]="['fas','edit']" size="lg" class="optionsIcon"></fa-icon>
+                                <span>Editar</span>
+                            </button>
+                            <button mat-menu-item (click)="$event.stopPropagation()" title="Añadir {{song.title}} a favorito">
+                                <fa-icon [icon]="['fas','heart']" size="lg" class="optionsIcon"></fa-icon>
+                                <span>Favorito</span>
+                            </button>
+                            <button mat-menu-item (click)="deleteSong(song)" title="Eliminar {{song.title}}">
+                                <fa-icon [icon]="['fas','trash-alt']" size="lg" class="optionsIcon"></fa-icon>
+                                <span>Eliminar</span>
+                            </button>
+                        </mat-menu>
+                        <fa-icon [icon]="['fas','minus-square']" (click)="deleteSong(song);$event.stopPropagation()" size="lg" title="Eliminar {{song.title}}" class="delete-button mt-2 d-none d-md-inline float-end"></fa-icon>
                     </div>
                 </div>
             </li>

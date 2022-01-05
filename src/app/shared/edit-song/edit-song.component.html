@@ -1,0 +1,64 @@
+<h1 mat-dialog-title class="text-center">Editar {{song.title}}</h1>
+<div mat-dialog-content>
+    <form (submit)="editSong()" [formGroup]="updateSongForm">
+        <div class="row justify-content-center position-relative mb-3">
+            <img class="img-song" [src]="newImage||song.imagePath||this.getApiBaseUrl()+'/default.png'" alt="">
+            <button mat-fab (click)="selectImage.click()" type="button" class="buttonImageCenter position-absolute">Cambiar</button>
+            <input #selectImage (change)="changeImageSong(selectImage)" type="file" accept=".png,.jpg,.jpeg" class="d-none">
+        </div>
+        <div *ngIf="imageInvalid" class="alert alert-danger text-center" role="alert">
+            <div class="row">
+                <div class="col-10 col-sm-11 align-self-center">
+                    <fa-icon [icon]="['fas','exclamation-triangle']" size="lg" class="dangerIcon d-inline-block"></fa-icon>
+                    <div class="d-inline-block">El peso de la imagen debe ser menos de 2MB</div>
+                </div>
+                <div class="col-2 col-sm-1 align-self-center">
+                    <fa-icon [icon]="['fas','times']" size="lg" (click)="claseErrorMess()" title="Cerrar" class="closeDangerIcon d-inline-block float-end cursor-pointer"></fa-icon>
+                </div>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="row mt-3">
+            <div class="mb-2 col-12 col-sm-6">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>Titulo</mat-label>
+                    <input matInput formControlName="title">
+                    <mat-error *ngIf="titleErrors?.['required']">Por favor ingreasa un titulo</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>Artista</mat-label>
+                    <input matInput formControlName="artist">
+                    <!-- <mat-error *ngIf="artistErrors?.['required']">Por favor ingreasa un artista</mat-error> -->
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>Album</mat-label>
+                    <input matInput formControlName="album">
+                    <!-- <mat-error *ngIf="albumErrors?.['required']">Por favor ingreasa un album</mat-error> -->
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-6 col-md-4">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label># Canción del album</mat-label>
+                    <input matInput formControlName="trackNumber">
+                    <!-- <mat-error *ngIf="trackNumberErrors?.['min']">El número no puede ser negativo</mat-error> -->
+                    <mat-error *ngIf="trackNumberErrors?.['pattern']">Ingresa un formato valido (num o num/N) con menos de 5 caracteres</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="mb-2 col-12 col-sm-12 col-md-4">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>Genero</mat-label>
+                    <input matInput formControlName="genre">
+                </mat-form-field>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+    </form>
+</div>
+<div mat-dialog-actions class="w-100 justify-content-around justify-content-sm-center">
+    <button mat-stroked-button color="accent" (click)="onNoClick()" class="mx-0 mx-sm-3">Cancelar</button>
+    <button mat-stroked-button color="primary" (click)="editSong()" class="mx-0 mx-sm-3">Confirmar</button>
+</div>
