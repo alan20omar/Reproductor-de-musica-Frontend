@@ -1,17 +1,14 @@
 import { ComponentRef, Injectable } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
-import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import SongModel from '../models/song';
 import NextSong from '../models/nextSong';
 
 import { ApiConfigService } from './api-config.service';
-import swal from 'sweetalert2';
 import Swal from 'sweetalert2';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { ProgressBarComponent } from '../shared/progress-bar/progress-bar.component';
 
 @Injectable({

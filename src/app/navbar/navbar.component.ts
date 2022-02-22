@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../services/auth.service';
 import { SongService } from '../services/song.service';
 
 @Component({
@@ -13,13 +15,16 @@ export class NavbarComponent implements OnInit {
   regexSongId = new RegExp('^\/(song|artist|genre|album)\/([0-9a-zA-Z]+)$');
 
   constructor(
-    public songService: SongService,
-    public activateRoute: ActivatedRoute,
+    private songService: SongService,
+    private authService: AuthService,
     private router: Router,
+    private cookieService: CookieService,
     ) { }
 
   ngOnInit(): void {
-    this.songService.getAllAvailableSongs();
+    const authToken: boolean = this.cookieService.check('auth_token');
+    if (authToken)
+      this.songService.getAllAvailableSongs();
     console.log('actualiced navbar');
   }
 
@@ -34,7 +39,9 @@ export class NavbarComponent implements OnInit {
     this.urlActiva = kind;
   }
 
-  
+  logout(){
+    this.authService.logout();
+  }
 
   // changeNavBar(newSelect: string){
   //   this.songService.navBarSelected = newSelect;

@@ -1,0 +1,42 @@
+<div class="login position-absolute">
+    <form (submit)="createAcount()" [formGroup]="createAcountForm">
+        <div class="row border">
+            <h2 class="text-center my-3">Crear cuenta nueva</h2>
+            <mat-divider></mat-divider>
+            <div class="col-12 col-sm-6 my-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Nombre(s)</mat-label>
+                    <input matInput placeholder="Nombre(s)" formControlName="name">
+                    <mat-error *ngIf="getError('name','required')">Nombre(s) requerido(s)</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-6 mb-3 mt-sm-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Apellidos</mat-label>
+                    <input matInput placeholder="Apellidos" formControlName="last_name">
+                    <mat-error *ngIf="getError('last_name','required')">Apellidos requeridos</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 mb-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Correo</mat-label>
+                    <input matInput type="email" placeholder="Correo" formControlName="email">
+                    <mat-error *ngIf="getError('email','required')">Correo electronico requerido</mat-error>
+                    <mat-error *ngIf="getError('email','email')">Por favor ingreasa un correo electronico valido</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 mb-3">
+                <mat-form-field class="w-100 example-full-width" appearance="fill">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput type="password" placeholder="Contraseña" formControlName="password">
+                    <mat-error *ngIf="getError('password','required')">Contraseña requerida</mat-error>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <div mat-dialog-actions class="w-100 my-3 justify-content-around justify-content-sm-center text-center">
+                <button mat-raised-button color="warn" [routerLink]="['/login']" (click)="$event.preventDefault()" class="mx-0 mx-sm-3">Cancelar</button>
+                <button mat-raised-button color="primary" class="mx-0 mx-sm-3">Crear cuenta</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -59,7 +59,7 @@
                         <div class="col-2 col-sm-3 col-md-1 col-xl-3">
                             <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()" [matMenuTriggerFor]="optionsMenuPlayer" size="lg" title="Opciones {{song.song.title}}" class="options-button px-3 py-2 float-end"></fa-icon>
                             <mat-menu #optionsMenuPlayer="matMenu" xPosition="before" yPosition="above">
-                                <button mat-menu-item (click)="$event.stopPropagation()" title="Editar {{song.song.title}}">
+                                <button mat-menu-item (click)="openEditSong(song.song)" title="Editar {{song.song.title}}">
                                     <fa-icon [icon]="['fas','edit']" size="lg" class="optionsIcon"></fa-icon>
                                     <span>Editar</span>
                                 </button>

@@ -1,7 +1,14 @@
-<app-navbar></app-navbar>
-<div class="container my-5">
-    <app-player></app-player>
-    <router-outlet></router-outlet>
-</div>
+<ng-template [ngIf]="router.url.includes('/login')" [ngIfElse]="login">
+    <div class="container my-5">
+        <router-outlet></router-outlet>
+    </div>
+</ng-template>
+<ng-template #login>
+    <app-navbar></app-navbar>
+    <div class="container my-5">
+        <app-player></app-player>
+        <router-outlet></router-outlet>
+    </div>
+</ng-template>
 
 

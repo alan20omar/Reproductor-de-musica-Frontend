@@ -83,6 +83,8 @@ export class EditSongComponent implements OnInit {
     }
     let formData = new FormData();
     formData = this.toFormData(this.updateSongForm.value);
+    // console.log(formData)
+    // this.songService.loginUser(formData);
     this.songService.patchSong(this.song._id, formData).subscribe({
       next: (updatedSong: SongModel) => {
         this.dialogRef.close(updatedSong);

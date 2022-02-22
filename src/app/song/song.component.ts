@@ -68,10 +68,10 @@ export class SongComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    //// TEST
-    // this.songService.getTest();
+    // TEST
     // this.songService.getTest1();
-    //// TEST
+    // this.songService.getTest();
+    // TEST
     // swal.fire(`Ocurrio un error`, 'No se pudo borrar la canción seleccionada', 'error');
   }
 

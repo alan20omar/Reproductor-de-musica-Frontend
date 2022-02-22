@@ -142,10 +142,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   reproducirSong(actualSong: SongTail){
-    if (!(this.actualSong === actualSong))
-      this.actualSong.song.filePath = undefined;
+    // if (!(this.actualSong === actualSong))
+    //   this.actualSong.song.filePath = undefined;
     this.actualSong = actualSong;
     this.indexActualSong = actualSong.index;
+    // console.log(this.actualSong.song.filePath);
     if (this.actualSong.song.filePath){
       this.player.load()
     }else{
@@ -157,9 +158,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.actualSong.song.filePath = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
         }, 
         error: (error) => {
-          this.playNextSong();
-          console.error(error);
           alert(`Ocurrio un error al intentar reproducir ${this.actualSong.song.title}`);
+          console.error(error);
+          // this.playNextSong();
         },
         complete: () => {
           actualSong.isLoading = false;
@@ -286,14 +287,28 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.songService.deleteSong(song._id);
   }
 
-  openEditSong(song: SongModel){
-    const dialogRef = this.dialog.open(EditSongComponent, {
-      width: '250px',
-      data: song,
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+  openEditSong(song: SongModel) {
+    this.songService.getOneSong(song._id).subscribe((songBase: SongModel) => {
+      this.songService.setImagePath(songBase);
+      const dialogRef = this.dialog.open(EditSongComponent, {
+        width: '80%',
+        maxWidth: '700px',
+        data: songBase,
+      });
+      dialogRef.afterClosed().subscribe((updatedSong: SongModel) => {
+        if (updatedSong) {
+          this.songService.setImagePathObserver(updatedSong).subscribe((s: any) => {
+            if (s.image)
+              updatedSong.imagePath = this.songService.generateSafeURL(s.image.imageBuffer.data);
+            else
+              updatedSong.imagePath = `${this.getApiBaseUrl()}/default.png`;
+            Object.assign(song, updatedSong);
+          });
+        }
+        // else{
+        // alert('Ocurrio un error')
+        // }
+      });
     });
   }
 
