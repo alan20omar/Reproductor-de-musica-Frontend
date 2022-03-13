@@ -47,8 +47,14 @@ export class ApiConfigService {
   }
 
   // API methods user
+  getUser(url: string): Observable<any>{
+    return this.httpclient.get<any>(`${this.API_BASE_URL}/${url}`);
+  }
   postUser(url: string, form: FormData): Observable<any>{
     return this.httpclient.post<any>(`${this.API_BASE_URL}/${url}`, form);
+  }
+  patchUser(url: string, form: FormData): Observable<any>{
+    return this.httpclient.patch<any>(`${this.API_BASE_URL}/${url}`, form);
   }
 
 

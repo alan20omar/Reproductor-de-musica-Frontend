@@ -1,18 +1,16 @@
 import { AfterViewInit, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, Input, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router, UrlTree } from '@angular/router';
-import SongModel from '../models/song';
-import { SongService } from '../services/song.service';
+import { SongService } from '../../services/song.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { EditSongComponent } from '../shared/edit-song/edit-song.component';
-import swal from 'sweetalert2';
 import Swal from 'sweetalert2';
+import SongModel from '../../models/song';
 
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { icon } from '@fortawesome/fontawesome-svg-core';
-import { ProgressBarComponent } from '../shared/progress-bar/progress-bar.component';
+import { MessagesService } from '../../services/messages.service';
+
+import { ProgressBarComponent } from '../../shared/progress-bar/progress-bar.component';
+import { SongsFilterPipe } from '../pipes/songs-filter.pipe';
 
 @Component({
   selector: 'app-song',
@@ -21,52 +19,26 @@ import { ProgressBarComponent } from '../shared/progress-bar/progress-bar.compon
 })
 export class SongComponent implements OnInit, AfterViewInit {
 
-  // Sweet alert
-  upload_alert = Swal.mixin({
-    toast: true,
-    position: 'bottom-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-
-// Toast.fire({
-//     icon: 'success',
-//     title: 'Signed in successfully'
-// })
-
-  // @Input() isTailList: Boolean = false;
-  // songsList: SongModel[] = [];
   sort: string = '';
   filter: string = '';
   private inputChanged: Subject<string> = new Subject<string>();
   subscriptionInputChange: Subscription;
-  @ViewChild('cleanSearchSong') cleanSearchSongRef!: ElementRef;
-  cleanSearchSong!: HTMLLabelElement;
+  // @ViewChild('cleanSearchSong') cleanSearchSongRef!: ElementRef;
+  // cleanSearchSong!: HTMLLabelElement;
   @ViewChild('uploadMessages', { read: ViewContainerRef }) uploadMessagesRef!: ViewContainerRef;
-
-  titularAlerta: string = '';
   
   constructor(
     private songService: SongService,
-    private activateRoute: ActivatedRoute,
+    private messService: MessagesService,
     public router: Router,
-    private sanitizer: DomSanitizer,
-    public dialog: MatDialog,
-    private renderer: Renderer2,
-    private injector: Injector,
     private cfr: ComponentFactoryResolver,
   ) { 
     this.subscriptionInputChange = this.inputChanged.pipe(debounceTime(200))
-      .subscribe((value: string) => {
-        this.searchSong(value);
-      });
+    .subscribe((value: string) => {
+      this.searchSong(value);
+    });
   }
-
+  
   ngOnInit(): void {
     // TEST
     // this.songService.getTest1();
@@ -74,13 +46,17 @@ export class SongComponent implements OnInit, AfterViewInit {
     // TEST
     // swal.fire(`Ocurrio un error`, 'No se pudo borrar la canción seleccionada', 'error');
   }
-
+  
   ngAfterViewInit() {
-    this.cleanSearchSong = this.cleanSearchSongRef.nativeElement;
+    // this.cleanSearchSong = this.cleanSearchSongRef.nativeElement;
     // this.uploadMessages = this.uploadMessagesRef.nativeElement;
   }
-
-  getApiBaseUrl(): string {
+  
+  get songList(): SongModel[]{
+    return this.songService.songsList;
+  }
+  
+  get apiBaseUrl(): string {
     return this.songService.getApiBaseUrl();
   }
 
@@ -112,18 +88,6 @@ export class SongComponent implements OnInit, AfterViewInit {
     input.value = '';
   }
 
-  getSongList(sort: string = '', filter: string = ''): SongModel[]{
-    let listSongs: SongModel[] = this.songService.songsList;
-    if (filter != ''){
-      listSongs = listSongs.filter((song) => song.title.toLowerCase().includes(filter.toLowerCase()));
-    }
-    if (sort === 'a-z'){
-      return listSongs.sort((a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1);
-    }else if (sort === 'z-a'){
-      return listSongs.sort((a, b) => (a.title.toLowerCase() < b.title.toLowerCase()) ? 1 : -1);
-    }
-    return listSongs
-  }
 
   getImagePath(song: SongModel){
     this.songService.setImagePath(song);
@@ -148,17 +112,18 @@ export class SongComponent implements OnInit, AfterViewInit {
 
   playAllSongs(){
     this.songService.deleteAllTailSong();
-    for (let song of this.getSongList(this.sort)){
+    const filterPipe = new SongsFilterPipe();
+    for (let song of filterPipe.transform(this.songList, this.filter, this.sort)){
       this.addSongToTailList(song);
     }
   }
 
   playAllRandom(){
     this.songService.deleteAllTailSong();
-    for ( let song of [...this.getSongList()].sort(() => (Math.random() > 0.5) ? 1 : -1) ) {
+    const filterPipe = new SongsFilterPipe();
+    for (let song of filterPipe.transform(this.songList, this.filter, this.sort).sort(() => (Math.random() > 0.5) ? 1 : -1) ) {
       this.addSongToTailList(song);
     }
-    // this.songService.getAllAvailableSongs();
   }
 
   searchSong(value: string){
@@ -167,17 +132,11 @@ export class SongComponent implements OnInit, AfterViewInit {
 
   inputSearchSongChange(input: HTMLInputElement){
     this.inputChanged.next(input.value);
-    if (input.value != '') {
-      this.cleanSearchSong.classList.remove('d-none');
-    } else {
-      this.cleanSearchSong.classList.add('d-none');
-    }
   }
 
   clickCleanSearchSong(input: HTMLInputElement){
     input.value = '';
     this.filter = '';
-    this.cleanSearchSong.classList.add('d-none');
   }
 
   changeSortList(sort: string){
@@ -185,27 +144,21 @@ export class SongComponent implements OnInit, AfterViewInit {
   }
 
   openEditSong(song: SongModel) {
-    this.songService.getOneSong(song._id).subscribe((songBase: SongModel) => {
-      this.songService.setImagePath(songBase);
-      const dialogRef = this.dialog.open(EditSongComponent, {
-        width: '80%',
-        maxWidth: '700px',
-        data: songBase,
-      });
-      dialogRef.afterClosed().subscribe((updatedSong: SongModel) => {
-        if (updatedSong){
-          this.songService.setImagePathObserver(updatedSong).subscribe((s: any) => {
-            if (s.image)
-              updatedSong.imagePath = this.songService.generateSafeURL(s.image.imageBuffer.data);
-            else
-              updatedSong.imagePath = `${this.getApiBaseUrl()}/default.png`;
-            Object.assign(song, updatedSong);
-          });
-        }
-        // else{
-        // alert('Ocurrio un error')
-        // }
-      });
+    this.songService.editSong(song);
+  }
+
+  toggleFavorite(song: SongModel) {
+    const formData = new FormData();
+    formData.append('favorite', String(!song.favorite));
+    this.songService.patchSong(song._id, formData).subscribe({
+      next: (patchSong: SongModel) => {
+        song.favorite = patchSong.favorite;
+        this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
+      },
+      error: (error) => {
+        console.error(error);
+        alert(`Ocurrio un error. No se pudo actualizar la canción seleccionada`);
+      }
     });
   }
 

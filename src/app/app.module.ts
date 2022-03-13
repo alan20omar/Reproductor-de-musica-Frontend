@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -22,34 +23,26 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 // import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 // Componentes
 import { AppComponent } from './app.component';
-import { SongComponent } from './song/song.component';
-import { PlayerComponent } from './player/player.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { AlbumComponent } from './album/album.component';
-
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlayerComponent } from './shared/player/player.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
 import { EditSongComponent } from './shared/edit-song/edit-song.component';
 import { ProgressBarComponent } from './shared/progress-bar/progress-bar.component';
-import { GeneralInterseptorInterceptor } from './helpers/general-interseptor.interceptor';
+
+import { SongsFilterPipe } from './shared/pipes/songs-filter.pipe';
 
 import { CookieService } from 'ngx-cookie-service';
-import { LoginComponent } from './login/login.component';
-import { CrearCuentaComponent } from './crear-cuenta/crear-cuenta.component';
+import { GeneralInterseptorInterceptor } from './helpers/general-interseptor.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SongComponent,
     PlayerComponent,
     NavbarComponent,
-    AlbumComponent,
     EditSongComponent,
     ProgressBarComponent,
-    LoginComponent,
-    CrearCuentaComponent,
+    SongsFilterPipe,
   ],
   imports: [
-    // NgbModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
@@ -65,16 +58,7 @@ import { CrearCuentaComponent } from './crear-cuenta/crear-cuenta.component';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     HttpClientModule,
-    // HttpClientXsrfModule.withOptions({
-    //   cookieName: 'XSRF-TOKEN',
-    //   headerName: 'X-XSRF-TOKEN'
-    // })
-    HttpClientXsrfModule.withOptions({ cookieName: 'csrftoken', headerName: 'X-CSRFToken' })
-    // HttpClientXsrfModule
-    // .withOptions({
-    //   cookieName: 'csrftoken',
-    //   headerName: 'X-CSRFTOKEN',
-    // }),
+    // HttpClientXsrfModule.withOptions({ cookieName: 'csrftoken', headerName: 'X-CSRFToken' }),
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: GeneralInterseptorInterceptor, multi: true }, CookieService],
   bootstrap: [AppComponent],
@@ -83,6 +67,5 @@ import { CrearCuentaComponent } from './crear-cuenta/crear-cuenta.component';
 export class AppModule {
   constructor(library: FaIconLibrary) {
     library.addIconPacks(fas, far, fab);
-
   }
 }

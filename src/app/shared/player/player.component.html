@@ -1,12 +1,12 @@
 <div class="row">
     <!-- Reproductor de canciones -->
-    <div class="col-12 col-md-6 col-lg-7 text-center align-self-center">
+    <div class="border col-12 col-md-6 col-lg-7 text-center align-self-center">
         <!-- Image -->
         <img [src]="actualSong.song.imagePath" class="rounded playerImage" />
         <h3>{{actualSong.song.title}}</h3>
-        <audio #player (ended)="playNextSong()" autoplay controls [src]="actualSong.song.filePath" class="playerAudio"></audio>
+        <audio #player (ended)="playNextSong()" (volumechange)="volumeChange(player)" autoplay controls [src]="actualSong.song.filePath" class="playerAudio"></audio>
     </div>
-    <div class="mt-3 col-12 col-md-6 mt-md-0 col-lg-5">
+    <div class="border mt-3 col-12 col-md-6 mt-md-0 col-lg-5">
         <h2 class="text-center">Canciones en cola</h2>
         <!-- Controles de la lista de canciones-->
         <div class="row p-3 mt-2 mb-1 bg-dark align-items-center">
@@ -30,18 +30,18 @@
                         <fa-icon [icon]="['fas','search']" size="lg"></fa-icon>
                     </label>
                     <input #searchSongPlayer (input)="inputSearchSongChange(searchSongPlayer)" type="text" class="border-0 form-control" placeholder="Song" id="buscarTailSong">
-                    <label #cleanSearchSongPlayer (click)="clickCleanSearchSong(searchSongPlayer)" title="limpiar" class="d-none border-0 bg-white input-group-text" for="buscarTailSong">
+                    <label #cleanSearchSongPlayer [hidden]="!searchSongPlayer.value" (click)="clickCleanSearchSong(searchSongPlayer)" title="limpiar" class=" border-0 bg-white input-group-text" for="buscarTailSong">
                         <fa-icon [icon]="['fas','trash-alt']" size="lg"></fa-icon>
                     </label>
                 </div>
             </div>
         </div>
-        <!-- Fin controles de la lista de canciones-->
+        <!-- Fin controles de la lista de canciones en cola-->
         <div class="tailList position-relative overflow-auto">
             <ul class="tailList1 w-100 list-group">
                 <div *ngIf="playerTail.length==0&&playerTailTemp.length==0" class="alert alert-info text-center" role="alert">¡No hay canciones en cola!</div>
                 <div *ngIf="playerTail.length==0&&playerTailTemp.length!=0" class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con {{searchSongPlayer.value}}!</div>
-                <li *ngFor="let song of playerTail" (click)="reproducirSong(song)" [class.active]="song.index==actualSong.index" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
+                <li *ngFor="let song of playerTail | tailSongsFilter:filter" (click)="reproducirSong(song)" [class.active]="song.index==actualSong.index" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
                     <div class="row">
                         <!-- Image -->
                         <div class="col-3 col-sm-2 col-md-3 col-xl-2 text-center">
@@ -63,8 +63,12 @@
                                     <fa-icon [icon]="['fas','edit']" size="lg" class="optionsIcon"></fa-icon>
                                     <span>Editar</span>
                                 </button>
-                                <button mat-menu-item (click)="$event.stopPropagation()" title="Añadir {{song.song.title}} a favorito">
+                                <button *ngIf="!song.song.favorite" mat-menu-item (click)="toggleFavorite(song.song); $event.preventDefault()" title="Añadir {{song.song.title}} a favorito">
                                     <fa-icon [icon]="['fas','heart']" size="lg" class="optionsIcon"></fa-icon>
+                                    <span>Favorito</span>
+                                </button>
+                                <button *ngIf="song.song.favorite" mat-menu-item (click)="toggleFavorite(song.song); $event.preventDefault()" title="Quitar {{song.song.title}} de favoritos">
+                                    <fa-icon [icon]="['fas','heart']" style="color: red" size="lg" class="optionsIcon"></fa-icon>
                                     <span>Favorito</span>
                                 </button>
                                 <button mat-menu-item (click)="deleteSongTail(song.index)" title="Quitar {{song.song.title}} de la cola">

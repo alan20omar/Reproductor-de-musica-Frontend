@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiConfigService } from './api-config.service';
 
 @Injectable({
@@ -9,6 +10,13 @@ import { ApiConfigService } from './api-config.service';
 export class AuthService {
 
   authToken: string = 'auth_token';
+  private _isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  
+  get isLoggedIn(): Observable<boolean>{
+    if ( this.cookieService.check(this.authToken) )
+      this._isLoggedIn.next(true);
+    return this._isLoggedIn.asObservable();
+  }
 
   constructor(
     private api: ApiConfigService,
@@ -21,8 +29,10 @@ export class AuthService {
   loginUser(form: FormData) {
     this.api.postLogin('login/', form).subscribe({
       next: (data: any) => {
-        if (data.token)
+        if (data.token){
           this.cookieService.set(this.authToken, data.token);
+          this._isLoggedIn.next(true);
+        }
         const nextUrl = this.activedRoute.snapshot.queryParamMap.get('next');
         if (nextUrl)
           this.router.navigate([nextUrl]);
@@ -39,8 +49,15 @@ export class AuthService {
   // LogOut
   logout() {
     this.cookieService.delete(this.authToken);
-    if (!this.cookieService.check(this.authToken))
+    if ( !this.cookieService.check(this.authToken) ){
       this.router.navigate(['/login']);
+      this._isLoggedIn.next(false);
+    }  
+  }
+
+  // Get user
+  getUser(){
+    return this.api.getUser('user/');
   }
 
   // Create user

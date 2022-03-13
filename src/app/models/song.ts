@@ -7,6 +7,7 @@ interface SongModel{
     album: string;
     genre: string;
     trackNumber: string;
+    favorite: boolean;
     // image?: any;
     imagePath?: SafeUrl;
     filePath?: SafeUrl;

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { AuthService } from '../services/auth.service';
-import { SongService } from '../services/song.service';
+import { AuthService } from '../../services/auth.service';
+import { SongService } from '../../services/song.service';
 
 @Component({
   selector: 'app-navbar',

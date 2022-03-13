@@ -1,3 +1,4 @@
+<router-outlet></router-outlet>
 <div class="row mt-5">
     <div class="my-3">
         <div #uploadMessages></div>
@@ -61,7 +62,7 @@
                 <div class="input-group" title="Buscar">
                     <label class="input-group-text" for="buscar1"><fa-icon [icon]="['fas','search']" size="lg"></fa-icon></label>
                     <input #searchSong (input)="inputSearchSongChange(searchSong)" type="text" class="border-0 form-control" placeholder="Song" id="buscar1">
-                    <label #cleanSearchSong (click)="clickCleanSearchSong(searchSong)" title="limpiar" class="d-none border-0 bg-white input-group-text" for="buscar1"><fa-icon [icon]="['fas','trash-alt']" size="lg"></fa-icon></label>
+                    <label #cleanSearchSong [hidden]="!searchSong.value" (click)="clickCleanSearchSong(searchSong)" title="limpiar" class="border-0 bg-white input-group-text" for="buscar1"><fa-icon [icon]="['fas','trash-alt']" size="lg"></fa-icon></label>
                 </div>
             </div>
             <!-- Upload song -->
@@ -76,13 +77,13 @@
     <!-- Fin controles de la lista de canciones-->
     <div class="col-12">
         <ul class="songsList p-0 list-group overflow-auto">
-            <label  for="uploadSong" *ngIf="getSongList().length==0" class="alert alert-info text-center" role="alert">No hay canciones disponibles! Haz click para agregar</label>
-            <li *ngFor="let song of getSongList(sort,filter)" (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active"  [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
+            <label  for="uploadSong" *ngIf="songList.length==0" class="alert alert-info text-center" role="alert">No hay canciones disponibles! Haz click para agregar</label>
+            <li *ngFor="let song of songList | songsFilter:filter:sort" (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active"  [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
                 <div class="row">
                     <!-- Image -->
                     <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center">
                         <!-- <img loading="lazy" [src]="song.imagePath" class="rounded image1" /> -->
-                        <img loading="lazy" [src]="song.imagePath||this.getApiBaseUrl()+'/default.png'" class="rounded image1" />
+                        <img loading="lazy" [src]="song.imagePath||this.apiBaseUrl+'/default.png'" class="rounded image1" />
                     </div>
                     <div class="col-7 col-sm-8 col-lg-9 col-xl-10">
                         <!-- Title -->
@@ -105,8 +106,14 @@
                                 <fa-icon [icon]="['fas','edit']" size="lg" class="optionsIcon"></fa-icon>
                                 <span>Editar</span>
                             </button>
-                            <button mat-menu-item (click)="$event.stopPropagation()" title="Añadir {{song.title}} a favorito">
+                            <button *ngIf="!song.favorite" mat-menu-item (click)="toggleFavorite(song); $event.preventDefault()"
+                                title="Añadir {{song.title}} a favorito">
                                 <fa-icon [icon]="['fas','heart']" size="lg" class="optionsIcon"></fa-icon>
+                                <span>Favorito</span>
+                            </button>
+                            <button *ngIf="song.favorite" mat-menu-item (click)="toggleFavorite(song); $event.preventDefault()"
+                                title="Quitar {{song.title}} de favoritos">
+                                <fa-icon [icon]="['fas','heart']" style="color: red" size="lg" class="optionsIcon"></fa-icon>
                                 <span>Favorito</span>
                             </button>
                             <button mat-menu-item (click)="deleteSong(song)" title="Eliminar {{song.title}}">

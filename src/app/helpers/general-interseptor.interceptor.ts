@@ -10,13 +10,14 @@ import {
 import { Observable, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class GeneralInterseptorInterceptor implements HttpInterceptor {
 
   constructor(
     private cookieService: CookieService,
-    private router: Router
+    private authService: AuthService,
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -33,7 +34,7 @@ export class GeneralInterseptorInterceptor implements HttpInterceptor {
           authorization: `Bearer ${token}`
         },
       });
-      console.log('hola desde intercep');
+      console.log('hola desde intercept');
     }
     
     return next.handle(req).pipe(
@@ -42,7 +43,7 @@ export class GeneralInterseptorInterceptor implements HttpInterceptor {
           if (err instanceof HttpErrorResponse){
             if (err.status !== 401 && err.status !== 500){
               if (err.status === 403){
-                this.cookieService.delete('auth_token');
+                this.authService.logout();
               }
               return;
             }

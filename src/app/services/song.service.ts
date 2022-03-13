@@ -7,9 +7,13 @@ import SongModel from '../models/song';
 import NextSong from '../models/nextSong';
 
 import { ApiConfigService } from './api-config.service';
-import Swal from 'sweetalert2';
+
 import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { MessagesService } from './messages.service';
+import { MatDialog } from '@angular/material/dialog';
+
 import { ProgressBarComponent } from '../shared/progress-bar/progress-bar.component';
+import { EditSongComponent } from '../shared/edit-song/edit-song.component';
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +53,9 @@ export class SongService {
 
   constructor(
     private api: ApiConfigService,
-    private sanitizer: DomSanitizer
+    private messService: MessagesService, 
+    private sanitizer: DomSanitizer,
+    private dialog: MatDialog,
   ) { }
   
   getApiBaseUrl(): string{
@@ -77,13 +83,6 @@ export class SongService {
   }
   // Add new song (upload file and add to songslist)
   addNewSong(file: File, compProgressRef: ComponentRef<ProgressBarComponent>): void {
-    const upload_alert = Swal.mixin({
-      toast: true,
-      position: 'bottom-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-    });
     const formData = new FormData();
     formData.append('song', file);
     const sub = this.api.postSong(`songs/`, formData).subscribe({
@@ -92,7 +91,7 @@ export class SongService {
         // sub.unsubscribe()
         if (event.type == HttpEventType.UploadProgress) {
           if (event.total) {
-            compProgressRef.instance.changeProgressBarValue((event.loaded / event.total) * 100)
+            compProgressRef.instance.changeProgressBarValue((event.loaded / event.total) * 100);
           }
         }
         else if (event.type === HttpEventType.Response) {
@@ -107,12 +106,13 @@ export class SongService {
           this.setImagePath(newSong);
           this.pushNewSong(newSong);
           compProgressRef.destroy();
-          upload_alert.fire({icon: 'success', title: `${newSong.title} subido correctamente`});
+          this.messService.bottomRightAlertSuccess(`<strong>${newSong.title}</strong> subido correctamente`);
         }
       },
       error: (error) =>{
         console.error(error);
-        Swal.fire({ title: 'Ocurrio un error', text: 'No se pudo subir la canción seleccionada', icon: 'error', timer: 1500 });
+        compProgressRef.destroy();
+        this.messService.centerAlertError('No se pudo subir la canción seleccionada');
       }
     });
   }
@@ -126,11 +126,36 @@ export class SongService {
         //   if (song._id === deletedSong._id) this.songsList.splice(index, 1);
         // });
         this.deleteTailSong(deletedSong);
+        this.messService.bottomRightAlertSuccess(`<span style="color: red"><strong>${deletedSong.title}</strong></span> eliminado correctamente`);
       },
       error: (error) =>{
         console.error(error);
-        Swal.fire({title: 'Ocurrio un error', text: 'No se pudo borrar la canción seleccionada', icon: 'error', timer: 4000});
+        this.messService.centerAlertError('No se pudo borrar la canción seleccionada');
       }
+    });
+  }
+
+  // Edit a song
+  editSong(song: SongModel){
+    this.getOneSong(song._id).subscribe((songBase: SongModel) => {
+      this.setImagePath(songBase);
+      const dialogRef = this.dialog.open(EditSongComponent, {
+        width: '80%',
+        maxWidth: '700px',
+        data: songBase,
+      });
+      dialogRef.afterClosed().subscribe((updatedSong: SongModel) => {
+        if (updatedSong) {
+          this.getImagePathObserver(updatedSong).subscribe((s: any) => {
+            if (s.image)
+              updatedSong.imagePath = this.generateSafeURL(s.image.imageBuffer.data);
+            else
+              updatedSong.imagePath = `${this.getApiBaseUrl()}/default.png`;
+            Object.assign(song, updatedSong);
+            this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
+          });
+        }
+      });
     });
   }
 
@@ -161,7 +186,7 @@ export class SongService {
 
   // Establecer una url temporal a la imagen de la cancion
   setImagePath(song: SongModel){
-    this.setImagePathObserver(song).subscribe((s: any) => {
+    this.getImagePathObserver(song).subscribe((s: any) => {
       if (s.image) {
         song.imagePath = this.generateSafeURL(s.image.imageBuffer.data);
       } else {
@@ -171,7 +196,7 @@ export class SongService {
   }
 
   // Observer get a song image
-  setImagePathObserver(song: SongModel): Observable<any>{
+  getImagePathObserver(song: SongModel): Observable<any>{
     return this.api.getImageSong(`songs/${song._id}/image`);
   }
 
@@ -186,6 +211,9 @@ export class SongService {
     return this.sanitizer.bypassSecurityTrustUrl('data:image/jpg;base64, ' + window.btoa(binary));
   }
 
+  patchUser(formData: FormData): Observable<any>{
+    return this.api.patchUser('user/', formData);
+  }
 
 
   //// TESTS

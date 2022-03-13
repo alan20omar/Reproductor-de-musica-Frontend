@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthGuardGuard implements CanActivate {
+  authTokenName = 'auth_token';
   constructor(
     private cookieService: CookieService,
     private router: Router,
@@ -14,7 +15,7 @@ export class AuthGuardGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const authToken: boolean = this.cookieService.check('auth_token');
+    const authToken: boolean = this.cookieService.check(this.authTokenName);
     if (!authToken){
       const url = state.url;
       // console.log(url)

@@ -4,13 +4,14 @@ import { ActivatedRoute, NavigationEnd, ParamMap, Router } from '@angular/router
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import SongModel from '../models/song';
-import NextSong from '../models/nextSong';
-import SongTail from '../models/songTail';
+import SongModel from '../../models/song';
+import NextSong from '../../models/nextSong';
+import SongTail from '../../models/songTail';
 
-import { SongService } from '../services/song.service';
-import { EditSongComponent } from '../shared/edit-song/edit-song.component';
+import { SongService } from '../../services/song.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../services/auth.service';
+import { MessagesService } from '../../services/messages.service';
 
 @Component({
   selector: 'app-player',
@@ -26,8 +27,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   subscriptionDeleteSong: Subscription;
   subscriptionDeleteAllSong: Subscription;
   subscriptionInputChange!: Subscription;
+  subscriptionVolumeChange!: Subscription;
   
   private inputChanged: Subject<string> = new Subject<string>();
+  private volumeChanged: Subject<number> = new Subject<number>();
   // Lista que se muestra en pantalla
   playerTail: SongTail[] = [];
   // Lista que almacena todas las canciones en cola mientras hay un filtro activo
@@ -36,7 +39,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   // pathActualSong!: SafeUrl;
   // pathActualImage?: SafeUrl = `${this.getApiBaseUrl()}/default.png`;
   // titleActualSong: string = 'Reproductor';
-  actualSong: SongTail = {index: -1, isLoading: false, song:{ _id: '', title: 'Reproductor', artist: '', album: '', genre: '', trackNumber: '', imagePath: `${this.getApiBaseUrl()}/default.png` } }
+  actualSong: SongTail = {index: -1, isLoading: false, song:{ _id: '', title: 'Reproductor', artist: '', album: '', genre: '', trackNumber: '', favorite: false, imagePath: `${this.getApiBaseUrl()}/default.png` } }
   filter: string = '';
   @ViewChild('player') audioRef!: ElementRef;
   player!: HTMLMediaElement;
@@ -45,6 +48,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   constructor(
     private songService: SongService,
+    private authService: AuthService,
+    private messService: MessagesService,
     private sanitizer: DomSanitizer,
     private router: Router,
     private activateRoute: ActivatedRoute,
@@ -69,6 +74,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         isLoading: false
       });
       if (!playerTail[this.actualSong.index]) this.playNextSong();
+      this.saveTailList(); // Guarda la lista en la base de datos.
     });
     // Añade una canción delante de la que se esta reproduciendo ahora
     this.subscriptionAddNextSong = this.songService.addNextSong$.subscribe((nextSong: NextSong)=>{
@@ -82,6 +88,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.resetPlayerTailIndexes(this.playerTail);
       if (filterTemp != '') this.searchSong(filterTemp); // Retoma el filtro si es que habia
       if (nextSong.playNext) this.playNextSong();
+      this.saveTailList(); // Guarda la lista en la base de datos.
     });
     // Elimina todas las canciones que coincidan con el id de la cancion pasada
     this.subscriptionDeleteSong = this.songService.deleteSongTail$.subscribe((song: SongModel) => {
@@ -107,6 +114,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.resetPlayerTailIndexes(this.playerTail);
       }
       if (filterTemp != '') this.searchSong(filterTemp); // Retoma el filtro si es que habia
+      this.saveTailList(); // Guarda la lista en la base de datos.
     });
     // Borra todas las canciones en cola
     this.subscriptionDeleteAllSong = this.songService.deleteAllSong$.subscribe(() => {
@@ -114,19 +122,53 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       if (filterTemp != '') this.searchSong(''); // Reinicia el filtro si es que hay
       this.deleteAllTailSongs();
       if (filterTemp != '') this.searchSong(filterTemp); // Retoma el filtro si es que habia
+      this.saveTailList(); // Guarda la lista en la base de datos.
     });
     // Retarda la ejecución del filtro de la lista de canciones en cola
     this.subscriptionInputChange = this.inputChanged.pipe(debounceTime(200))
       .subscribe((value: string) => {
-        this.searchSong(value);
+        // this.searchSong(value);
+        this.filter = value;
+      });
+    // Retarda la ejecución de la petición de cambio de volumen
+    this.subscriptionVolumeChange = this.volumeChanged.pipe(debounceTime(400))
+      .subscribe((volume: number) => {
+        const formData = new FormData();
+        formData.append('volume', volume.toString());
+        this.songService.patchUser(formData).subscribe({
+          next: (data) =>{ },
+          error: (error) => { console.log(error) }
+        });
       });
   }
 
   ngOnInit(): void {
     console.log('Player inciciado');
+    
   }
 
   ngAfterViewInit() {
+    console.log('Player visto');
+    this.authService.getUser().subscribe({
+      next: (user) => {
+        this.player.volume = user.volume;
+        if (user.play_queue) {
+          user.play_queue.forEach((songId: string) => {
+            const song: SongModel = this.songService.songsList.filter((song) => song._id === songId)[0];
+            this.playerTail.push({ index: 0, song: song, isLoading: false });
+          })
+          this.resetPlayerTailIndexes(this.playerTail);
+          if (user.actual_index_song || user.actual_index_song === 0) {
+            // console.log(this.playerTail[user.actual_index_song])
+            if (this.playerTail[user.actual_index_song]) {
+              this.reproducirSong(this.playerTail[user.actual_index_song]);
+            }
+          }
+          // console.log(this.playerTail)
+        }
+      },
+      error: (error) => { console.error('Ocurrio un error: ' + error.error); }
+    });
     this.player = this.audioRef.nativeElement;
     this.cleanSearchSong = this.cleanSearchSongRef.nativeElement;
   }
@@ -166,19 +208,22 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           actualSong.isLoading = false;
         }
       });
+      // console.log(this.indexActualSong)
     }
-    const match = this.router.url.match(this.regexSongId)
+    this.saveActualSong(); // Guarda la cancion actial en la base de datos
+    const match = this.router.url.match(this.regexSongId);
     if (match) this.router.navigate([match[1], this.actualSong.song._id]);
   }
 
   playNextSong() {
     // Select playerTail with all songs
-    let playerTail: SongTail[] = []
-    if (this.filter != '') {
-      playerTail = this.playerTailTemp;
-    } else {
-      playerTail = this.playerTail;
-    }
+    let playerTail: SongTail[] = [];
+    // let playerTail: SongTail[] = [];
+    // if (this.filter != '') {
+    //   playerTail = this.playerTailTemp;
+    // } else {
+    //   playerTail = this.playerTail;
+    // }
     this.actualSong = playerTail[this.indexActualSong + 1];
     this.indexActualSong += 1;
     if (playerTail.length <= this.indexActualSong) {
@@ -195,7 +240,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   resetPlayer(){
     this.indexActualSong = -1;
-    this.actualSong = { index: -1, isLoading: false, song: { _id: '', title: 'Reproductor', artist: '', album: '', genre: '', trackNumber: '', imagePath: `${this.getApiBaseUrl()}/default.png` } }
+    this.actualSong = { index: -1, isLoading: false, song: { _id: '', title: 'Reproductor', artist: '', album: '', genre: '', trackNumber: '', favorite: false,imagePath: `${this.getApiBaseUrl()}/default.png` } }
     const match = this.router.url.match(this.regexSongId)
     if (match) this.router.navigate([match[1]]);
   }
@@ -206,7 +251,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   clickCleanSearchSong(input: HTMLInputElement) {
     input.value = '';
-    this.cleanSearchSong.classList.add('d-none');
     this.searchSong('');
   }
 
@@ -233,6 +277,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.resetPlayerTailIndexes(this.playerTail);
     }
     if (filterTemp != '') this.searchSong(filterTemp); // Retoma el filtro si es que habia
+    this.saveTailList(); // Guarda la lista en la base de datos.
   }
 
   deleteAllTailSongs(){
@@ -251,36 +296,33 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.indexActualSong -= 1;
         }
         this.resetPlayerTailIndexes(this.playerTail);
+        this.saveTailList(); // Guarda la lista en la base de datos.
         this.searchSong(filterTemp); // Retoma el filtro si es que habia
       });
       if (changeSongFlag) this.playNextSong();
     }else{
       this.playerTail = [];
       this.resetPlayer();
+      this.saveTailList(); // Guarda la lista en la base de datos.
     }
   }
 
   inputSearchSongChange(input: HTMLInputElement){
     this.inputChanged.next(input.value);
-    if (input.value != '') {
-      this.cleanSearchSong.classList.remove('d-none');
-    } else {
-      this.cleanSearchSong.classList.add('d-none');
-    }
   }
 
   // Filtra las canciones en cola
-  searchSong(value: string){
-    if (this.playerTail.length != 0 || this.playerTailTemp.length != 0){
-      if (value != '') {
-        if (this.filter == '') this.playerTailTemp = this.playerTail;
-        this.playerTail = this.playerTailTemp.filter((song) => song.song.title.toLowerCase().includes(value.toLowerCase()));
-      }else{
-        this.playerTail = this.playerTailTemp;
-        this.playerTailTemp = [];
-      }
-    }
-    this.filter = value;
+  searchSong(filter: string){
+    // if (this.playerTail.length != 0 || this.playerTailTemp.length != 0){
+    //   if (filter != '') {
+    //     if (this.filter == '') this.playerTailTemp = this.playerTail;
+    //     this.playerTail = this.playerTailTemp.filter((song) => song.song.title.toLowerCase().includes(filter.toLowerCase()));
+    //   }else{
+    //     this.playerTail = this.playerTailTemp;
+    //     this.playerTailTemp = [];
+    //   }
+    // }
+    this.filter = filter;
   }
   
   deleteSong(song: SongModel){
@@ -288,27 +330,47 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   openEditSong(song: SongModel) {
-    this.songService.getOneSong(song._id).subscribe((songBase: SongModel) => {
-      this.songService.setImagePath(songBase);
-      const dialogRef = this.dialog.open(EditSongComponent, {
-        width: '80%',
-        maxWidth: '700px',
-        data: songBase,
-      });
-      dialogRef.afterClosed().subscribe((updatedSong: SongModel) => {
-        if (updatedSong) {
-          this.songService.setImagePathObserver(updatedSong).subscribe((s: any) => {
-            if (s.image)
-              updatedSong.imagePath = this.songService.generateSafeURL(s.image.imageBuffer.data);
-            else
-              updatedSong.imagePath = `${this.getApiBaseUrl()}/default.png`;
-            Object.assign(song, updatedSong);
-          });
-        }
-        // else{
-        // alert('Ocurrio un error')
-        // }
-      });
+    this.songService.editSong(song);
+  }
+
+  volumeChange(audio: HTMLAudioElement){
+    this.volumeChanged.next(audio.volume);
+  }
+
+  toggleFavorite(song: SongModel){
+    const formData = new FormData();
+    formData.append('favorite', String(!song.favorite));
+    this.songService.patchSong(song._id, formData).subscribe({
+      next: (patchSong: SongModel) =>{
+        song.favorite = patchSong.favorite;
+        this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
+      },
+      error: (error) => {
+        console.error(error);
+        alert(`Ocurrio un error. No se pudo actualizar la canción seleccionada`);
+      }
+    });
+  }
+
+  saveTailList(){
+    const tailSave: string[] = [];
+    this.playerTail.forEach((song) => {
+      tailSave.push(song.song._id);
+    });
+    const formData = new FormData();
+    formData.append('play_queue', tailSave.toString());
+    this.songService.patchUser(formData).subscribe({
+      next: (data) => { },
+      error: (error) => { console.log(error) }
+    });
+  }
+
+  saveActualSong(){
+    const formData = new FormData();
+    formData.append('actual_index_song', this.indexActualSong.toString());
+    this.songService.patchUser(formData).subscribe({
+      next: (data) => { },
+      error: (error) => { console.log(error) }
     });
   }
 
@@ -319,5 +381,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.subscriptionDeleteSong.unsubscribe();
     this.subscriptionDeleteAllSong.unsubscribe();
     this.subscriptionInputChange.unsubscribe();
+    this.subscriptionVolumeChange.unsubscribe();
   }
 }

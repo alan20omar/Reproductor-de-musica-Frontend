@@ -1,6 +1,6 @@
 <h1 mat-dialog-title class="text-center">Editar {{song.title}}</h1>
-<div mat-dialog-content>
-    <form (submit)="editSong()" [formGroup]="updateSongForm">
+<form (submit)="editSong()" [formGroup]="updateSongForm">
+    <div mat-dialog-content>
         <div class="row justify-content-center position-relative mb-3">
             <img class="img-song" [src]="newImage||song.imagePath||this.getApiBaseUrl()+'/default.png'" alt="">
             <button mat-fab (click)="selectImage.click()" type="button" class="buttonImageCenter position-absolute">Cambiar</button>
@@ -56,9 +56,9 @@
             </div>
         </div>
         <mat-divider></mat-divider>
-    </form>
-</div>
-<div mat-dialog-actions class="w-100 justify-content-around justify-content-sm-center">
-    <button mat-stroked-button color="accent" (click)="onNoClick()" class="mx-0 mx-sm-3">Cancelar</button>
-    <button mat-stroked-button color="primary" (click)="editSong()" class="mx-0 mx-sm-3">Confirmar</button>
-</div>
+    </div>
+    <div mat-dialog-actions class="w-100 justify-content-around justify-content-sm-center">
+        <button mat-stroked-button color="accent" (click)="onNoClick()" class="mx-0 mx-sm-3">Cancelar</button>
+        <button mat-stroked-button color="primary" type="submit" (click)="editSong()" class="mx-0 mx-sm-3">Confirmar</button>
+    </div>
+</form>
