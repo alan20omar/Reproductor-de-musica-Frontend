@@ -39,8 +39,8 @@
         <!-- Fin controles de la lista de canciones en cola-->
         <div class="tailList position-relative overflow-auto">
             <ul class="tailList1 w-100 list-group">
-                <div *ngIf="playerTail.length==0&&playerTailTemp.length==0" class="alert alert-info text-center" role="alert">¡No hay canciones en cola!</div>
-                <div *ngIf="playerTail.length==0&&playerTailTemp.length!=0" class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con {{searchSongPlayer.value}}!</div>
+                <div *ngIf="!playerTail.length" class="alert alert-info text-center" role="alert">¡No hay canciones en cola!</div>
+                <div *ngIf="!(playerTail | tailSongsFilter:filter).length&&playerTail.length" class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con {{searchSongPlayer.value}}!</div>
                 <li *ngFor="let song of playerTail | tailSongsFilter:filter" (click)="reproducirSong(song)" [class.active]="song.index==actualSong.index" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
                     <div class="row">
                         <!-- Image -->

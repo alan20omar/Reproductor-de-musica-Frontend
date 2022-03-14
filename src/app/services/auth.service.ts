@@ -30,7 +30,7 @@ export class AuthService {
     this.api.postLogin('login/', form).subscribe({
       next: (data: any) => {
         if (data.token){
-          this.cookieService.set(this.authToken, data.token);
+          this.cookieService.set(this.authToken, data.token, 5);
           this._isLoggedIn.next(true);
         }
         const nextUrl = this.activedRoute.snapshot.queryParamMap.get('next');
@@ -48,7 +48,7 @@ export class AuthService {
 
   // LogOut
   logout() {
-    this.cookieService.delete(this.authToken);
+    this.cookieService.delete(this.authToken, '/');
     if ( !this.cookieService.check(this.authToken) ){
       this.router.navigate(['/login']);
       this._isLoggedIn.next(false);
