@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import SongModel from 'src/app/models/song';
@@ -54,7 +54,7 @@ export class EditSongComponent implements OnInit {
   }
 
   getApiBaseUrl(): string {
-    return this.songService.getApiBaseUrl();
+    return this.songService.apiBaseUrl;
   }
 
   claseErrorMess(){

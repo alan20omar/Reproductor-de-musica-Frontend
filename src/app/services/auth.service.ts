@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import UserModel from '../models/user';
 import { ApiConfigService } from './api-config.service';
 
 @Injectable({
@@ -56,7 +57,7 @@ export class AuthService {
   }
 
   // Get user
-  getUser(){
+  getUser(): Observable<UserModel> {
     return this.api.getUser('user/');
   }
 
@@ -74,5 +75,10 @@ export class AuthService {
           alert('Ocurrio un error. No se pudo crear la cuenta: ' + error.message);
       }
     });
+  }
+
+  // Editar usuario
+  patchUser(formData: FormData): Observable<any> {
+    return this.api.patchUser('user/', formData);
   }
 }

@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDividerModule } from '@angular/material/divider';
+import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 
 import { ProgressBarComponent } from './progress-bar.component';
 
@@ -8,7 +10,11 @@ describe('ProgressBarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProgressBarComponent ]
+      declarations: [ ProgressBarComponent ],
+      imports: [
+        FontAwesomeTestingModule,
+        MatDividerModule
+      ]
     })
     .compileComponents();
   });

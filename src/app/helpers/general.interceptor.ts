@@ -5,15 +5,13 @@ import {
   HttpEvent,
   HttpInterceptor,
   HttpErrorResponse,
-  HttpXsrfTokenExtractor
 } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
-import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
-export class GeneralInterseptorInterceptor implements HttpInterceptor {
+export class GeneralInterceptor implements HttpInterceptor {
 
   constructor(
     private cookieService: CookieService,

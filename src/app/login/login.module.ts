@@ -20,7 +20,6 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     // Angular Material
     MatInputModule,
-    // MatDialogModule,
     MatButtonModule,
   ],
   exports: []

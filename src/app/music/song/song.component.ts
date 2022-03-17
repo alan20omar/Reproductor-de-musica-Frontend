@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, Input, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
-import { ActivatedRoute, Router, UrlTree } from '@angular/router';
+import { AfterViewInit, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { SongService } from '../../services/song.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -57,7 +56,7 @@ export class SongComponent implements OnInit, AfterViewInit {
   }
   
   get apiBaseUrl(): string {
-    return this.songService.getApiBaseUrl();
+    return this.songService.apiBaseUrl;
   }
 
   createProgressUploadSong(name: string): ComponentRef<ProgressBarComponent>{

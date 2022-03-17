@@ -9,18 +9,10 @@ import { Observable, Subject, Subscription } from 'rxjs';
 export class ProgressBarComponent implements OnInit {
   @ViewChild('progressBar') progressBarRef!: ElementRef;
   progressBar!: HTMLDivElement;
-  // valueNow: number = 0;
-  // subscriptionChangeValue: Subscription;
-  // @Input() number!: Subject<number>;
   @Input() title!: string;
   constructor(
     
-  ) { 
-    // this.subscriptionChangeValue = this.number.subscribe((num: number) => {
-    //   // this.valueNow = num;
-    //   this.progressBar.setAttribute('aria-valuenow',num.toString());
-    // });
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -33,8 +25,6 @@ export class ProgressBarComponent implements OnInit {
     this.progressBar.setAttribute('style',`width: ${num.toString()}%`)
   }
   ngOnDestroy() {
-    // prevent memory leak when component is destroyed
-    // this.subscriptionChangeValue.unsubscribe();
   }
 
 }

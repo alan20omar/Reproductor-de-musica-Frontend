@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { ProgressBarComponent } from '../shared/progress-bar/progress-bar.component';
 import { EditSongComponent } from '../shared/edit-song/edit-song.component';
+import SongImageModel from '../models/songImage';
 
 @Injectable({
   providedIn: 'root'
@@ -53,18 +54,18 @@ export class SongService {
 
   constructor(
     private api: ApiConfigService,
-    private messService: MessagesService, 
+    private messService: MessagesService,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
   ) { }
   
-  getApiBaseUrl(): string{
+  get apiBaseUrl(): string{
     return this.api.API_BASE_URL;
   }
 
   // Fetch all data songs available
   getAllAvailableSongs(): void{
-    this.api.getData('songs/').subscribe((songs) => {
+    this.api.getData('songs/').subscribe((songs: SongModel[]) => {
       this.songsList = songs;
       songs.forEach((song) => {
         this.setImagePath(song);
@@ -113,6 +114,9 @@ export class SongService {
         console.error(error);
         compProgressRef.destroy();
         this.messService.centerAlertError('No se pudo subir la canción seleccionada');
+      },
+      complete: () => {
+        sub.unsubscribe();
       }
     });
   }
@@ -150,7 +154,7 @@ export class SongService {
             if (s.image)
               updatedSong.imagePath = this.generateSafeURL(s.image.imageBuffer.data);
             else
-              updatedSong.imagePath = `${this.getApiBaseUrl()}/default.png`;
+              updatedSong.imagePath = `${this.apiBaseUrl}/default.png`;
             Object.assign(song, updatedSong);
             this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
           });
@@ -186,17 +190,17 @@ export class SongService {
 
   // Establecer una url temporal a la imagen de la cancion
   setImagePath(song: SongModel){
-    this.getImagePathObserver(song).subscribe((s: any) => {
+    this.getImagePathObserver(song).subscribe((s: SongImageModel) => {
       if (s.image) {
         song.imagePath = this.generateSafeURL(s.image.imageBuffer.data);
       } else {
-        song.imagePath = `${this.getApiBaseUrl()}/default.png`;
+        song.imagePath = `${this.apiBaseUrl}/default.png`;
       }
     });
   }
 
   // Observer get a song image
-  getImagePathObserver(song: SongModel): Observable<any>{
+  getImagePathObserver(song: SongModel): Observable<SongImageModel>{
     return this.api.getImageSong(`songs/${song._id}/image`);
   }
 
@@ -210,22 +214,4 @@ export class SongService {
     }
     return this.sanitizer.bypassSecurityTrustUrl('data:image/jpg;base64, ' + window.btoa(binary));
   }
-
-  patchUser(formData: FormData): Observable<any>{
-    return this.api.patchUser('user/', formData);
-  }
-
-
-  //// TESTS
-  getTest(){
-    this.api.getTest().subscribe((data)=>{
-      console.log(data);
-    })
-  }
-  getTest1(){
-    this.api.getTest1().subscribe((data)=>{
-      console.log(data)
-    })
-  }
-  //// TESTS
 }

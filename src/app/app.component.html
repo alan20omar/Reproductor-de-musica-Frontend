@@ -1,6 +1,6 @@
 <app-navbar *ngIf="isLoggedIn$ | async"></app-navbar>
 <div class="container my-5">
-    <app-player *ngIf="isLoggedIn$ | async"></app-player>
+    <app-play-queue *ngIf="isLoggedIn$ | async"></app-play-queue>
     <router-outlet></router-outlet>
 </div>
 

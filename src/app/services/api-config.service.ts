@@ -3,6 +3,8 @@ import { HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpRequest, HttpXsr
 
 import SongModel from '../models/song';
 import { last, map, Observable, tap } from 'rxjs';
+import SongImageModel from '../models/songImage';
+import UserModel from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -43,12 +45,12 @@ export class ApiConfigService {
     return this.httpclient.get<Blob>(`${this.API_BASE_URL}/${url}`, { responseType: 'blob' as 'json' });
   }
   getImageSong( url: string ){
-    return this.httpclient.get<any>(`${this.API_BASE_URL}/${url}`);
+    return this.httpclient.get<SongImageModel>(`${this.API_BASE_URL}/${url}`);
   }
 
   // API methods user
-  getUser(url: string): Observable<any>{
-    return this.httpclient.get<any>(`${this.API_BASE_URL}/${url}`);
+  getUser(url: string): Observable<UserModel>{
+    return this.httpclient.get<UserModel>(`${this.API_BASE_URL}/${url}`);
   }
   postUser(url: string, form: FormData): Observable<any>{
     return this.httpclient.post<any>(`${this.API_BASE_URL}/${url}`, form);
