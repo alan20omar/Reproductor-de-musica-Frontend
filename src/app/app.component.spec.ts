@@ -1,20 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AuthService } from './services/auth.service';
 
 describe('AppComponent', () => {
 
-  let isloggedIn: boolean;
-  let fakeAuthService: AuthService;
+  let spy_isLoggedIn: jasmine.Spy<() => Observable<boolean>>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
-
-    fakeAuthService = jasmine.createSpyObj<AuthService>('AuthService', {
-      createUser: undefined,
-      isLoggedIn: of(isloggedIn)
-    });
+    mockAuthService = jasmine.createSpyObj<AuthService>('AuthService', [], ['isLoggedIn']);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -24,9 +20,14 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
-        { provide: AuthService, useValue: fakeAuthService }
+        { provide: AuthService, useValue: mockAuthService }
       ]
     }).compileComponents();
+    spy_isLoggedIn = (Object.getOwnPropertyDescriptor(mockAuthService, 'isLoggedIn')?.get as jasmine.Spy<() => Observable<boolean>>).and.returnValue(of(true));
+  });
+
+  afterEach(() => {
+    expect(spy_isLoggedIn).toHaveBeenCalledOnceWith();
   });
 
   it('should create the app', () => {

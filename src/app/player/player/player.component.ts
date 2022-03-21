@@ -18,7 +18,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   @Output() changeActualIndexEvent = new EventEmitter<number>();
   @Output() playNextSongEvent = new EventEmitter<void>();
-  regexSongId = new RegExp('^\/(song|artist|genre|album)(\/[0-9a-zA-Z]+|)$');
+  regexSongId = new RegExp('^\/(song|artist|genre|album)\/([0-9a-zA-Z]*)$');
   subscritions: Subscription[] = [];
   
   private volumeChanged: Subject<number> = new Subject<number>();
@@ -67,7 +67,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.actualSong = actualSong;
     // console.log(this.actualSong.song.filePath);
     if (this.actualSong.song.filePath) {
-      this.player.load()
+      this.player.load();
     } else {
       console.log('descargo file')
       actualSong.isLoading = true;

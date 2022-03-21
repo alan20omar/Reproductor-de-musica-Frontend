@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 
@@ -18,8 +18,8 @@ export class AuthGuardGuard implements CanActivate {
     const authToken: boolean = this.cookieService.check(this.authTokenName);
     if (!authToken){
       const url = state.url;
-      // console.log(url)
-      return this.router.navigate(['/login/'], { queryParams: { next: url } });
+      this.router.navigate(['/login/'], { queryParams: { next: url } });
+      return false;
     }else{
       return true;
     }

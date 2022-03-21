@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import LoginUserModel from '../models/loginUser';
+import ResLoginModel from '../models/resLogin';
 import UserModel from '../models/user';
 import { ApiConfigService } from './api-config.service';
 
@@ -14,8 +16,6 @@ export class AuthService {
   private _isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   
   get isLoggedIn(): Observable<boolean>{
-    if ( this.cookieService.check(this.authToken) )
-      this._isLoggedIn.next(true);
     return this._isLoggedIn.asObservable();
   }
 
@@ -24,12 +24,15 @@ export class AuthService {
     private cookieService: CookieService,
     private router: Router,
     private activedRoute: ActivatedRoute
-  ) { }
+  ) { 
+    if (this.cookieService.check(this.authToken))
+      this._isLoggedIn.next(true);
+  }
 
   // Login
-  loginUser(form: FormData) {
-    this.api.postLogin('login/', form).subscribe({
-      next: (data: any) => {
+  loginUser(data: LoginUserModel) {
+    this.api.postLogin('login/', data).subscribe({
+      next: (data: ResLoginModel) => {
         if (data.token){
           this.cookieService.set(this.authToken, data.token, 5);
           this._isLoggedIn.next(true);

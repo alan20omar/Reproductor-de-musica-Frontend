@@ -9,7 +9,7 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   title = 'backend';
-  isLoggedIn$!: Observable<boolean>;
+  isLoggedIn$: Observable<boolean>;
   constructor(
     private authService: AuthService, 
   ){ 

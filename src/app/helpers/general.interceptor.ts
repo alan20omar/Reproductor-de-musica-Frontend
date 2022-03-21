@@ -19,38 +19,28 @@ export class GeneralInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-
-    const token = this.cookieService.get('auth_token');
-    // console.log(token)
-    let req = request;
+    const token: string = this.cookieService.get('auth_token');
+    let req: HttpRequest<unknown> = request;
     if (token){
       req = request.clone({
-        // headers: request.headers.set('X-CSRFToken', xsrfToken),
         withCredentials: true,
-        // headers: request.headers.set('Authorization', `bearer ${token}`)
         setHeaders: {
           authorization: `Bearer ${token}`
         },
       });
       console.log('hola desde intercept');
     }
-    
     return next.handle(req).pipe(
-      tap(() => {},
-        (err: any) => {
+      tap({
+        error: (err: any) => {
           if (err instanceof HttpErrorResponse){
-            if (err.status !== 401 && err.status !== 500){
-              if (err.status === 403){
-                this.authService.logout();
-              }
-              return;
+            if (err.status === 403){
+              this.authService.logout();
             }
-            // funcion Cerrar sesion
-            // router naveagate home
+            return;
           }
         }
-      )
+      })
     );
   }
-
 }

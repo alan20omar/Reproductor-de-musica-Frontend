@@ -3,8 +3,11 @@ import { HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpRequest, HttpXsr
 
 import SongModel from '../models/song';
 import { last, map, Observable, tap } from 'rxjs';
+
 import SongImageModel from '../models/songImage';
 import UserModel from '../models/user';
+import LoginUserModel from '../models/loginUser';
+import ResLoginModel from '../models/resLogin';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +20,8 @@ export class ApiConfigService {
   ) { }
 
   // API auth
-  postLogin(url: string, form: FormData): Observable<any>{
-    return this.httpclient.post<any>(`${this.API_BASE_URL}/${url}`, form);
+  postLogin(url: string, data: LoginUserModel): Observable<ResLoginModel>{
+    return this.httpclient.post<ResLoginModel>(`${this.API_BASE_URL}/${url}`, data);
   }
 
   // API methods songs data

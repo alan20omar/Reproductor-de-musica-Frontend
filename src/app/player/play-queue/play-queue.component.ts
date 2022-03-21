@@ -16,7 +16,6 @@ import { PlayerComponent } from '../player/player.component';
 })
 export class PlayQueueComponent implements OnInit, AfterViewInit {
 
-  regexSongId = new RegExp('^\/(song|artist|genre|album)(\/[0-9a-zA-Z]+|)$');
   playerTail: SongTail[] = [];
   subscritions: Subscription[] = [];
   private inputChanged: Subject<string> = new Subject<string>();
@@ -31,9 +30,11 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private songService: SongService,
     private messService: MessagesService,
-  ) { 
+  ) { }
+
+  ngOnInit(): void {
     // Añade una cancion a la cola
-    this.subscritions.push(this.songService.addTailSong$.subscribe(( song: SongModel ) => {
+    this.subscritions.push(this.songService.addTailSong$.subscribe((song: SongModel) => {
       this.playerTail.push({
         song,
         index: this.playerTail.length,
@@ -87,9 +88,6 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
         this.filter = value;
       })
     );
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
