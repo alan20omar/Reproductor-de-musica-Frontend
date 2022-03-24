@@ -45,7 +45,7 @@ export class ApiConfigService {
 
   // API methods songs file
   getSong( url: string ){
-    return this.httpclient.get<Blob>(`${this.API_BASE_URL}/${url}`, { responseType: 'blob' as 'json' });
+    return this.httpclient.get<File>(`${this.API_BASE_URL}/${url}`, { responseType: 'blob' as 'json' });
   }
   getImageSong( url: string ){
     return this.httpclient.get<SongImageModel>(`${this.API_BASE_URL}/${url}`);

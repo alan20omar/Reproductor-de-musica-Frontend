@@ -13,6 +13,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SongsFilterPipe } from '../music/pipes/songs-filter.pipe';
+import { ScrollDownPipe } from './pipes/scroll-down.pipe';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
 @NgModule({
@@ -20,9 +22,11 @@ import { SongsFilterPipe } from '../music/pipes/songs-filter.pipe';
     SongComponent,
     AlbumComponent,
     SongsFilterPipe,
+    ScrollDownPipe,
   ],
   imports: [
     CommonModule,
+    InfiniteScrollModule,
     MusicRoutingModule,
     ReactiveFormsModule,
     FontAwesomeModule,

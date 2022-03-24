@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Swal from 'sweetalert2';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +19,8 @@ export class MessagesService {
     return upload_alert.fire({ icon: 'success', title: mess });
   }
 
-  centerAlertError(mess: string): any{
-    return Swal.fire({ title: 'Ocurrio un error', text: mess, icon: 'error', timer: 4000 });
+  centerAlert(mess: string, title: string = 'Ocurrio un error', type: SweetAlertIcon = 'error'): any{
+    return Swal.fire({ text: mess, title: title, icon: type, timer: 4000 });
   }
 
-  
 }

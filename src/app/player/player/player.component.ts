@@ -8,6 +8,7 @@ import SongTail from '../../models/songTail';
 import { SongService } from '../../services/song.service';
 import { AuthService } from '../../services/auth.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import SongModel from 'src/app/models/song';
 
 @Component({
   selector: 'app-player',
@@ -23,7 +24,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   
   private volumeChanged: Subject<number> = new Subject<number>();
 
-  actualSong: SongTail = {index: -1, isLoading: false, song:{ _id: '', title: 'Reproductor', artist: '', album: '', genre: '', trackNumber: '', favorite: false, imagePath: `${this.apiBaseUrl}/default.png` } }
+  actualSong: SongTail = {index: -1, isLoading: false, song: { title: 'Reproductor', favorite: false, imagePath: `${this.apiBaseUrl}/default.png`} as unknown as SongModel }
   
   @ViewChild('player') audioRef!: ElementRef;
   player!: HTMLMediaElement;
@@ -60,10 +61,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   reproducirSong(actualSong: SongTail) {
-    if (!actualSong) {
-      this.resetPlayer();
-      return;
-    }
     this.actualSong = actualSong;
     // console.log(this.actualSong.song.filePath);
     if (this.actualSong.song.filePath) {
@@ -72,7 +69,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       console.log('descargo file')
       actualSong.isLoading = true;
       this.songService.getFileSong(this.actualSong.song._id).subscribe({
-        next: (file: Blob) => {
+        next: (file: File) => {
           this.actualSong.song.filePath = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
         },
         error: (error) => {
@@ -92,13 +89,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.playNextSongEvent.emit();
   }
 
-  // changeActualSong(actualSong: SongTail){
-  //   this.actualSong = actualSong;
-  // }
-
   resetPlayer(){
     this.changeActualIndexEvent.emit(-1);
-    this.actualSong = { index: -1, isLoading: false, song: { _id: '', title: 'Reproductor', artist: '', album: '', genre: '', trackNumber: '', favorite: false,imagePath: `${this.apiBaseUrl}/default.png` } }
+    this.actualSong = { index: -1, isLoading: false, song: { title: 'Reproductor', favorite: false, imagePath: `${this.apiBaseUrl}/default.png` } as unknown as SongModel }
     const match = this.router.url.match(this.regexSongId);
     if (match) this.router.navigate([match[1]]);
   }

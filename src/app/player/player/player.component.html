@@ -1,4 +1,4 @@
 <!-- Image -->
-<img [src]="actualSong.song.imagePath" class="rounded playerImage" />
+<img [src]="actualSong.song.imagePath || apiBaseUrl+'/default.png'" class="rounded playerImage" />
 <h3>{{actualSong.song.title}}</h3>
 <audio #player (ended)="playNextSong()" (volumechange)="volumeChange(player.volume)" autoplay controls [src]="actualSong.song.filePath" class="playerAudio"></audio>

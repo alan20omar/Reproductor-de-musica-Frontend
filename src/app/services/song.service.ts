@@ -67,9 +67,9 @@ export class SongService {
   getAllAvailableSongs(): void{
     this.api.getData('songs/').subscribe((songs: SongModel[]) => {
       this.songsList = songs;
-      songs.forEach((song) => {
-        this.setImagePath(song);
-      });
+      // songs.forEach((song) => {
+      //   this.setImagePath(song);
+      // });
     });
   }
 
@@ -79,7 +79,7 @@ export class SongService {
   }
 
   // Get file song
-  getFileSong(songId: string): Observable<Blob>{
+  getFileSong(songId: string): Observable<File>{
     return this.api.getSong(`songs/${songId}/file`);
   }
   // Add new song (upload file and add to songslist)
@@ -104,7 +104,7 @@ export class SongService {
           // Asigna una url temporal a la cancion subida 
           newSong.filePath = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
           // Asigna una url temporal a la imagen de la canción
-          this.setImagePath(newSong);
+          // this.setImagePath(newSong);
           this.pushNewSong(newSong);
           compProgressRef.destroy();
           this.messService.bottomRightAlertSuccess(`<strong>${newSong.title}</strong> subido correctamente`);
@@ -113,7 +113,7 @@ export class SongService {
       error: (error) =>{
         console.error(error);
         compProgressRef.destroy();
-        this.messService.centerAlertError('No se pudo subir la canción seleccionada');
+        this.messService.centerAlert('No se pudo subir la canción seleccionada');
       },
       complete: () => {
         sub.unsubscribe();
@@ -134,7 +134,7 @@ export class SongService {
       },
       error: (error) =>{
         console.error(error);
-        this.messService.centerAlertError('No se pudo borrar la canción seleccionada');
+        this.messService.centerAlert('No se pudo borrar la canción seleccionada');
       }
     });
   }

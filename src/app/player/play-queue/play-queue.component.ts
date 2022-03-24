@@ -114,7 +114,15 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
     });
   }
 
+  get apiBaseUrl(): string {
+    return this.songService.apiBaseUrl;
+  }
+
   reproducirSong(actualSong: SongTail) {
+    if (!actualSong) {
+      this.playerComponent.resetPlayer();
+      return;
+    }
     this.indexActualSong = actualSong.index;
     this.playerComponent.reproducirSong(actualSong);
     this.saveActualSong(); // Guarda la cancion actual en la base de datos
@@ -151,6 +159,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
   }
 
   deleteSongTail(index: number) {
+    console.log('hola')
     this.playerTail.splice(index, 1);
     this.resetPlayerTailIndexes();
     if (index === this.indexActualSong) {

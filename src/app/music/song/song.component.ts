@@ -20,10 +20,9 @@ export class SongComponent implements OnInit, AfterViewInit {
 
   sort: string = '';
   filter: string = '';
+  page: number = 2;
   private inputChanged: Subject<string> = new Subject<string>();
-  subscriptionInputChange: Subscription;
-  // @ViewChild('cleanSearchSong') cleanSearchSongRef!: ElementRef;
-  // cleanSearchSong!: HTMLLabelElement;
+  subscriptions: Subscription[] = [];
   @ViewChild('uploadMessages', { read: ViewContainerRef }) uploadMessagesRef!: ViewContainerRef;
   
   constructor(
@@ -31,25 +30,16 @@ export class SongComponent implements OnInit, AfterViewInit {
     private messService: MessagesService,
     public router: Router,
     private cfr: ComponentFactoryResolver,
-  ) { 
-    this.subscriptionInputChange = this.inputChanged.pipe(debounceTime(200))
+  ) { }
+  
+  ngOnInit(): void { 
+    this.subscriptions.push(this.inputChanged.pipe(debounceTime(200))
     .subscribe((value: string) => {
       this.searchSong(value);
-    });
+    }));
   }
   
-  ngOnInit(): void {
-    // TEST
-    // this.songService.getTest1();
-    // this.songService.getTest();
-    // TEST
-    // swal.fire(`Ocurrio un error`, 'No se pudo borrar la canción seleccionada', 'error');
-  }
-  
-  ngAfterViewInit() {
-    // this.cleanSearchSong = this.cleanSearchSongRef.nativeElement;
-    // this.uploadMessages = this.uploadMessagesRef.nativeElement;
-  }
+  ngAfterViewInit() { }
   
   get songList(): SongModel[]{
     return this.songService.songsList;
@@ -59,34 +49,18 @@ export class SongComponent implements OnInit, AfterViewInit {
     return this.songService.apiBaseUrl;
   }
 
-  createProgressUploadSong(name: string): ComponentRef<ProgressBarComponent>{
-    const compFactory: ComponentFactory<ProgressBarComponent> = this.cfr.resolveComponentFactory(ProgressBarComponent);
-    const compRef: ComponentRef<ProgressBarComponent> = this.uploadMessagesRef.createComponent(compFactory);
-
-    // const compFactory: ComponentFactory<MatProgressBar> = this.cfr.resolveComponentFactory(MatProgressBar);
-    // // const compRef = compFactory.create(this.injector);
-    // // this.uploadMessagesRef.insert(compRef.hostView);
-    // const compRef: ComponentRef<MatProgressBar> = this.uploadMessagesRef.createComponent(compFactory);
-    // this.renderer.appendChild(html_messageUpload, compRef.instance._elementRef.nativeElement);
-    // compRef.instance.mode = 'buffer';
-    // return compRef;
-
-    compRef.instance.title = name;
-    return compRef;
-  }
-
   addSong(input: HTMLInputElement){
-    if (input.value == '' || !input.files){
-      Swal.fire({ title: 'Archivo no seleccionado', text: 'Por favor añade una canción', icon: 'warning', timer: 4000 });
+    if (!input.value || !input.files){
+      this.messService.centerAlert('Por favor añade una canción', 'Archivo no seleccionado', 'warning');
       return;
     }
     for (let file of input.files){
-      const compProgressRef = this.createProgressUploadSong(file.name);
+      const compProgressRef: ComponentRef<ProgressBarComponent> = this.createProgressUploadSong(file.name);
       this.songService.addNewSong(file, compProgressRef);
     }
     input.value = '';
+    input.files = null;
   }
-
 
   getImagePath(song: SongModel){
     this.songService.setImagePath(song);
@@ -95,7 +69,7 @@ export class SongComponent implements OnInit, AfterViewInit {
   playSong(song: SongModel){
     this.songService.addNextTailSong(song, true);
   }
-
+  
   playNextSong(song: SongModel){
     this.songService.addNextTailSong(song, false);
   }
@@ -103,7 +77,7 @@ export class SongComponent implements OnInit, AfterViewInit {
   deleteSong(song: SongModel){
     this.songService.deleteSong(song._id);
   }
-
+  
   // Añadir cancion a cola
   addSongToTailList(song: SongModel){
     this.songService.addTailSong(song);
@@ -124,11 +98,11 @@ export class SongComponent implements OnInit, AfterViewInit {
       this.addSongToTailList(song);
     }
   }
-
+  
   searchSong(value: string){
     this.filter = value;
   }
-
+  
   inputSearchSongChange(input: HTMLInputElement){
     this.inputChanged.next(input.value);
   }
@@ -145,7 +119,7 @@ export class SongComponent implements OnInit, AfterViewInit {
   openEditSong(song: SongModel) {
     this.songService.editSong(song);
   }
-
+  
   toggleFavorite(song: SongModel) {
     const formData = new FormData();
     formData.append('favorite', String(!song.favorite));
@@ -161,11 +135,30 @@ export class SongComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // isActive(id: string){
-  //   return this.router.IsActiveMatchOptions('/song/{{song.id}}' | UrlTree, true)
-  // }
+  scrollDown(){
+    this.page += 1;
+    console.log('scrolled')
+  }
+
+  createProgressUploadSong(name: string): ComponentRef<ProgressBarComponent>{
+    const compFactory: ComponentFactory<ProgressBarComponent> = this.cfr.resolveComponentFactory(ProgressBarComponent);
+    const compRef: ComponentRef<ProgressBarComponent> = this.uploadMessagesRef.createComponent(compFactory);
+
+    // const compFactory: ComponentFactory<MatProgressBar> = this.cfr.resolveComponentFactory(MatProgressBar);
+    // // const compRef = compFactory.create(this.injector);
+    // // this.uploadMessagesRef.insert(compRef.hostView);
+    // const compRef: ComponentRef<MatProgressBar> = this.uploadMessagesRef.createComponent(compFactory);
+    // this.renderer.appendChild(html_messageUpload, compRef.instance._elementRef.nativeElement);
+    // compRef.instance.mode = 'buffer';
+    // return compRef;
+
+    compRef.instance.title = name;
+    return compRef;
+  }
   
   ngOnDestroy(){
-    this.subscriptionInputChange.unsubscribe();
+    this.subscriptions.forEach( sub => {
+      sub.unsubscribe();
+    });
   }
 }
