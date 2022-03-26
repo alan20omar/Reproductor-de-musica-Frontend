@@ -20,13 +20,6 @@ import SongImageModel from '../models/songImage';
   providedIn: 'root'
 })
 export class SongService {
-  private _navBarSelected: string = 'songs';
-  get navBarSelected(): string{
-    return this._navBarSelected;
-  }
-  set navBarSelected(newValue: string){
-    this._navBarSelected = newValue;
-  }
 
   private _songsList: SongModel[] = [];
   get songsList(): SongModel[]{
@@ -37,6 +30,7 @@ export class SongService {
   }
   pushNewSong(newSong: SongModel): void{
     this._songsList.push(newSong);
+    this._songsList = [...this._songsList]; // subject.next or this
   }
 
   // Observable para añadir cancion a cola

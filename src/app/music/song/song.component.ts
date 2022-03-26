@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { SongService } from '../../services/song.service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import Swal from 'sweetalert2';
 import SongModel from '../../models/song';
 
 import { MessagesService } from '../../services/messages.service';

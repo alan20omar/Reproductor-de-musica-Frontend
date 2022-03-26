@@ -61,6 +61,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
       } else {
         this.playerTail.push({ index: 0, song: nextSong.song, isLoading: false });
       }
+      this.playerTail = [...this.playerTail]; // subject.next or this
       if (nextSong.playNext) this.playNextSong();
       this.saveTailList(); // Guarda la lista en la base de datos.
     }));
@@ -161,7 +162,8 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
       alert('No hay canciones en la cola');
       return;
     }
-    this.playerTail = this.playerTail.sort((song) => (Math.random() > 0.5) ? 1 : -1);
+    this.playerTail.sort((song) => (Math.random() > 0.5) ? 1 : -1);
+    this.playerTail = [...this.playerTail]; // subject.next or this
     this.resetPlayerTailIndexes(this.playerTail);
     this.reproducirSong(this.playerTail[0]);
   }
@@ -169,6 +171,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
   deleteSongTail(index: number) {
     console.log('hola')
     this.playerTail.splice(index, 1);
+    this.playerTail = [...this.playerTail]; // subject.next or this
     this.resetPlayerTailIndexes();
     if (index === this.indexActualSong) {
       this.indexActualSong -= 1;
