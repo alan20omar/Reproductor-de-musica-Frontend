@@ -45,6 +45,14 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
       if (!this.playerTail[this.indexActualSong]) this.playNextSong();
       this.saveTailList(); // Guarda la lista en la base de datos.
     }));
+    // Añade una lista nueva de canciones a la cola
+    this.subscritions.push(this.songService.addNewTailSong$.subscribe((songList: SongModel[]) => {
+      this.playerTail = songList.map((song: SongModel, index: number) => { return {song, index, isLoading: false} });
+      this.indexActualSong = -1;
+      // this.page = 2; // Reset scroll 
+      this.playNextSong();
+      this.saveTailList(); // Guarda la lista en la base de datos.
+    }));
     // Añade una canción delante de la que se esta reproduciendo ahora
     this.subscritions.push(this.songService.addNextSong$.subscribe((nextSong: NextSong) => {
       if (this.playerTail[this.indexActualSong]) {

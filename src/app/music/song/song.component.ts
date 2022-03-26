@@ -84,19 +84,13 @@ export class SongComponent implements OnInit, AfterViewInit {
   }
 
   playAllSongs(){
-    this.songService.deleteAllTailSong();
     const filterPipe = new SongsFilterPipe();
-    for (let song of filterPipe.transform(this.songList, this.filter, this.sort)){
-      this.addSongToTailList(song);
-    }
+    this.songService.addNewTailSong(filterPipe.transform(this.songList, this.filter, this.sort));
   }
 
   playAllRandom(){
-    this.songService.deleteAllTailSong();
     const filterPipe = new SongsFilterPipe();
-    for (let song of filterPipe.transform(this.songList, this.filter, this.sort).sort(() => (Math.random() > 0.5) ? 1 : -1) ) {
-      this.addSongToTailList(song);
-    }
+    this.songService.addNewTailSong(filterPipe.transform(this.songList, this.filter, this.sort).sort(() => (Math.random() > 0.5) ? 1 : -1));
   }
   
   searchSong(value: string){

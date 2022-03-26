@@ -42,6 +42,9 @@ export class SongService {
   // Observable para añadir cancion a cola
   private _addTailSongSource: Subject<SongModel> = new Subject<SongModel>();
   public readonly addTailSong$: Observable<SongModel> = this._addTailSongSource.asObservable();
+  // Observable para añadir una nueva lista de canciones a la cola
+  private _addNewTailSongSource: Subject<SongModel[]> = new Subject<SongModel[]>();
+  get addNewTailSong$(): Observable<SongModel[]> { return this._addNewTailSongSource.asObservable() };
   // Observable para quitar de la cola una canción
   private _deleteSongTailSource: Subject<SongModel> = new Subject<SongModel>();
   public readonly deleteSongTail$: Observable<SongModel> = this._deleteSongTailSource.asObservable();
@@ -168,22 +171,27 @@ export class SongService {
     return this.api.patchSong(`songs/${songId}`, form);
   }
 
-  // Cambiar valor del observable (ultima canción añadida a la cola)
+  // Cambiar valor del subject (ultima canción añadida a la cola)
   addTailSong(song: SongModel) {
     this._addTailSongSource.next(song);
   }
 
-  // Cambiar valor del observable (quitar una cancion de la cola)
+  // Cambiar valor del subject (ultima lista añadida a la cola)
+  addNewTailSong(songList: SongModel[]) {
+    this._addNewTailSongSource.next(songList);
+  }
+
+  // Cambiar valor del subject (quitar una cancion de la cola)
   deleteTailSong(song: SongModel) {
     this._deleteSongTailSource.next(song);
   }
 
-  // Cambiar valor del observable (quitar todas las canciones de la cola)
+  // Cambiar valor del subject (quitar todas las canciones de la cola)
   deleteAllTailSong() {
     this._deleteAllSongSource.next();
   }
 
-  // Cambiar valor del observable (añadir cancion despues de la actual)
+  // Cambiar valor del subject (añadir cancion despues de la actual)
   addNextTailSong(song: SongModel, playNext:boolean){
     this._addNextSongSource.next({song: song, playNext: playNext});
   }
