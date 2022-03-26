@@ -12,31 +12,23 @@ import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontaweso
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
-// Angular matrial
-import { MatInputModule } from '@angular/material/input';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-// import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 // Componentes
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './shared/navbar/navbar.component';
-import { EditSongComponent } from './shared/edit-song/edit-song.component';
-import { ProgressBarComponent } from './shared/progress-bar/progress-bar.component';
 
 import { CookieService } from 'ngx-cookie-service';
 import { GeneralInterceptor } from './helpers/general.interceptor';
+import { PreventDuplicateRequestInterceptor } from './helpers/prevent-duplicate-request.interceptor';
+
 import { PlayerModule } from './player/player.module';
+import { SharedModule } from './shared/shared.module';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
-    EditSongComponent,
-    ProgressBarComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     FontAwesomeModule,
     AppRoutingModule,
@@ -44,15 +36,14 @@ import { PlayerModule } from './player/player.module';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     PlayerModule,
-    // Angular Material
-    MatInputModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatProgressBarModule,
+    SharedModule,
     // HttpClientXsrfModule.withOptions({ cookieName: 'csrftoken', headerName: 'X-CSRFToken' }),
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: GeneralInterceptor, multi: true }, CookieService],
+  providers: [
+    CookieService,
+    { provide: HTTP_INTERCEPTORS, useClass: PreventDuplicateRequestInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: GeneralInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
   // schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

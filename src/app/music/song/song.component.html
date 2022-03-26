@@ -89,7 +89,7 @@
                     <!-- Image -->
                     <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center">
                         <!-- <img loading="lazy" [src]="song.imagePath" class="rounded image1" /> -->
-                        <img loading="lazy" [src]="song.imagePath||this.apiBaseUrl+'/default.png'" class="rounded image1" />
+                        <img appSetImage [appSong]="song" loading="lazy" [src]="song.imagePath" class="rounded image1" />
                     </div>
                     <div class="col-7 col-sm-8 col-lg-9 col-xl-10">
                         <!-- Title -->

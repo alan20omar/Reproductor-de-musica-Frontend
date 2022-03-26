@@ -34,7 +34,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private router: Router,
     private sanitizer: DomSanitizer,
-  ) { 
+  ) { }
+  
+  ngOnInit(): void {
+    console.log('Player inciciado');
     // Retarda la ejecución de la petición de cambio de volumen
     this.subscritions.push(this.volumeChanged.pipe(debounceTime(400))
       .subscribe((volume: number) => {
@@ -46,10 +49,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         });
       })
     );
-  }
-
-  ngOnInit(): void {
-    console.log('Player inciciado');
   }
 
   ngAfterViewInit() {

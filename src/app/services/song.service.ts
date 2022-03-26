@@ -12,8 +12,8 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { MessagesService } from './messages.service';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ProgressBarComponent } from '../shared/progress-bar/progress-bar.component';
-import { EditSongComponent } from '../shared/edit-song/edit-song.component';
+import { ProgressBarComponent } from '../shared/components/progress-bar/progress-bar.component';
+import { EditSongComponent } from '../shared/components/edit-song/edit-song.component';
 import SongImageModel from '../models/songImage';
 
 @Injectable({

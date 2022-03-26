@@ -6,16 +6,15 @@ import SongModel from 'src/app/models/song';
 })
 export class SongsFilterPipe implements PipeTransform {
 
-  transform(songsLis: SongModel[], filter: string = '', sort: string = ''): SongModel[] {
-    let songsList = [...songsLis];
-    console.log('filter')
+  transform(songsLi: SongModel[], filter: string = '', sort: string = ''): SongModel[] {
+    let songsList: SongModel[] = [...songsLi];
     if (filter) {
       songsList = songsList.filter((song) => song.title.toLowerCase().includes(filter.toLowerCase()));
     }
     if (sort === 'a-z') {
-      songsList = songsList.sort((a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1);
+      songsList.sort((a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1);
     } else if (sort === 'z-a') {
-      songsList = songsList.sort((a, b) => (a.title.toLowerCase() < b.title.toLowerCase()) ? 1 : -1);
+      songsList.sort((a, b) => (a.title.toLowerCase() < b.title.toLowerCase()) ? 1 : -1);
     }
     return songsList;
   }

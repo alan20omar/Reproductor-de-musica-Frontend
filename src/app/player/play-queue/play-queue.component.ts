@@ -20,6 +20,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
   subscritions: Subscription[] = [];
   private inputChanged: Subject<string> = new Subject<string>();
   filter: string = '';
+  page: number = 2;
   indexActualSong: number = -1;
 
   @ViewChild('cleanSearchSongPlayer') cleanSearchSongRef!: ElementRef;
@@ -33,6 +34,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
+    // console.log('cola de canciones iniciada')
     // Añade una cancion a la cola
     this.subscritions.push(this.songService.addTailSong$.subscribe((song: SongModel) => {
       this.playerTail.push({
@@ -94,28 +96,26 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
     this.cleanSearchSong = this.cleanSearchSongRef.nativeElement;
     this.authService.getUser().subscribe({
       next: (user: UserModel) => {
+        const pt: SongTail[] = [];
         this.playerComponent.setVolume(user.volume);
         if (user.play_queue) {
           user.play_queue.forEach((songId: string) => {
             const song: SongModel = this.songService.songsList.filter((song) => song._id === songId)[0];
-            this.playerTail.push({ index: 0, song: song, isLoading: false });
+            pt.push({ index: 0, song: song, isLoading: false });
           })
-          this.resetPlayerTailIndexes(this.playerTail);
+          this.resetPlayerTailIndexes(pt);
           if (user.actual_index_song || user.actual_index_song === 0) {
-            // console.log(this.playerTail[user.actual_index_song])
-            if (this.playerTail[user.actual_index_song]) {
-              this.reproducirSong(this.playerTail[user.actual_index_song]);
+            // console.log(pt[user.actual_index_song])
+            if (pt[user.actual_index_song]) {
+              this.reproducirSong(pt[user.actual_index_song]);
             }
           }
+          this.playerTail = pt;
           // console.log(this.playerTail)
         }
       },
       error: (error) => { console.error('Ocurrio un error: ' + error.error); }
     });
-  }
-
-  get apiBaseUrl(): string {
-    return this.songService.apiBaseUrl;
   }
 
   reproducirSong(actualSong: SongTail) {
@@ -247,6 +247,11 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
       next: (data) => { },
       error: (error) => { console.log(error) }
     });
+  }
+
+  scrollDown() {
+    this.page += 1;
+    console.log('scrolled player')
   }
 
   ngOndestroy(){

@@ -8,7 +8,7 @@ import SongModel from '../../models/song';
 
 import { MessagesService } from '../../services/messages.service';
 
-import { ProgressBarComponent } from '../../shared/progress-bar/progress-bar.component';
+import { ProgressBarComponent } from '../../shared/components/progress-bar/progress-bar.component';
 import { SongsFilterPipe } from '../pipes/songs-filter.pipe';
 
 @Component({
@@ -44,20 +44,20 @@ export class SongComponent implements OnInit, AfterViewInit {
   get songList(): SongModel[]{
     return this.songService.songsList;
   }
-  
-  get apiBaseUrl(): string {
-    return this.songService.apiBaseUrl;
-  }
 
   addSong(input: HTMLInputElement){
     if (!input.value || !input.files){
       this.messService.centerAlert('Por favor añade una canción', 'Archivo no seleccionado', 'warning');
       return;
     }
-    for (let file of input.files){
+    // for (let file of input.files){
+    //   const compProgressRef: ComponentRef<ProgressBarComponent> = this.createProgressUploadSong(file.name);
+    //   this.songService.addNewSong(file, compProgressRef);
+    // }
+    Array.from(input.files).forEach(file => {
       const compProgressRef: ComponentRef<ProgressBarComponent> = this.createProgressUploadSong(file.name);
       this.songService.addNewSong(file, compProgressRef);
-    }
+    });
     input.value = '';
     input.files = null;
   }

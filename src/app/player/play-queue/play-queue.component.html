@@ -26,7 +26,7 @@
                     <label class="input-group-text" for="buscarTailSong">
                         <fa-icon [icon]="['fas','search']" size="lg"></fa-icon>
                     </label>
-                    <input #searchSongPlayer (input)="inputSearchSongChange(searchSongPlayer)" type="text"
+                    <input #searchSongPlayer (input)="inputSearchSongChange(searchSongPlayer)" value="" type="text"
                         class="border-0 form-control" placeholder="Song" id="buscarTailSong">
                     <label #cleanSearchSongPlayer [hidden]="!searchSongPlayer.value"
                         (click)="clickCleanSearchSong(searchSongPlayer)" title="limpiar"
@@ -37,19 +37,25 @@
             </div>
         </div>
         <!-- Fin controles de la lista de canciones en cola-->
-        <div class="tailList position-relative overflow-auto">
+        <div #ulScrollPlayer class="tailList position-relative overflow-auto"
+        infiniteScroll 
+        [infiniteScrollContainer]="ulScrollPlayer"
+        [infiniteScrollDistance]="1" 
+        [infiniteScrollThrottle]="200"
+        (scrolled)="scrollDown()" 
+        >
             <ul class="tailList1 w-100 list-group">
                 <div *ngIf="!playerTail.length" class="alert alert-info text-center" role="alert">¡No hay canciones en cola!
                 </div>
-                <div *ngIf="!(playerTail | tailSongsFilter:filter).length&&playerTail.length"
-                    class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con
-                    {{searchSongPlayer.value}}!</div>
-                <li *ngFor="let song of playerTail | tailSongsFilter:filter" (click)="reproducirSong(song)" [class.active]="song.index==indexActualSong" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
+                <div *ngIf="!(playerTail|tailSongsFilter:filter).length&&playerTail.length"
+                    class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con {{searchSongPlayer.value}}!
+                </div>
+                <li *ngFor="let song of playerTail|tailSongsFilter:filter|scrollDown:page" (click)="reproducirSong(song)" [class.active]="song.index==indexActualSong" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
                     <div class="row">
                         <!-- Image -->
                         <div class="col-3 col-sm-2 col-md-3 col-xl-2 text-center">
                             <div class="image2 rounded position-relative">
-                                <img [src]="song.song.imagePath || apiBaseUrl+'/default.png'" class="w-100 h-100" />
+                                <img appSetImage [appSong]="song.song" [src]="song.song.imagePath" class="w-100 h-100" />
                                 <mat-spinner *ngIf="song.isLoading" diameter="50" class="spiner position-absolute">
                                 </mat-spinner>
                             </div>

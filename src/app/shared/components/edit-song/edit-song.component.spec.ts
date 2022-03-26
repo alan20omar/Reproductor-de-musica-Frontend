@@ -20,7 +20,7 @@ describe('EditSongComponent', () => {
   let nextSong: NextSong;
   let songList: SongModel[];
   let apiURL: string;
-  let file: Blob;
+  // let file: Blob;
   let fakeSongService: SongService;
   let fakeMatDialogRef: MatDialogRef<EditSongComponent>;
   let data: SongModel = {title: '', _id: '', artist: '', album: '', genre: '', favorite: false, trackNumber: ''};
@@ -29,7 +29,7 @@ describe('EditSongComponent', () => {
     fakeSongService = jasmine.createSpyObj<SongService>('SongService', {
       songsList: songList,
       apiBaseUrl: apiURL,
-      getFileSong: of(file),
+      // getFileSong: of(file),
       deleteSong: undefined,
       editSong: undefined,
       patchSong: of(song),
