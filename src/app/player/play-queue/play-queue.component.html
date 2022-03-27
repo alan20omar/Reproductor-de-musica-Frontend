@@ -53,7 +53,7 @@
                 <li *ngFor="let song of playerTail|tailSongsFilter:filter|scrollDown:page" (click)="reproducirSong(song)" [class.active]="song.index==indexActualSong" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
                     <div class="row">
                         <!-- Image -->
-                        <div class="col-3 col-sm-2 col-md-3 col-xl-2 text-center">
+                        <div class="col-3 col-sm-2 col-md-3 col-xl-2 text-center align-self-center">
                             <div class="image2 rounded position-relative">
                                 <img appSetImage [appSong]="song.song" [src]="song.song.imagePath" class="w-100 h-100" />
                                 <mat-spinner *ngIf="song.isLoading" diameter="50" class="spiner position-absolute">

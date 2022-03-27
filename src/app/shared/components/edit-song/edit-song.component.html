@@ -58,7 +58,7 @@
         <mat-divider></mat-divider>
     </div>
     <div mat-dialog-actions class="w-100 justify-content-around justify-content-sm-center">
-        <button mat-stroked-button color="accent" (click)="onNoClick()" class="mx-0 mx-sm-3">Cancelar</button>
-        <button mat-stroked-button color="primary" type="submit" (click)="editSong()" class="mx-0 mx-sm-3">Confirmar</button>
+        <button mat-stroked-button color="accent" (click)="onNoClick();$event.preventDefault()" class="mx-0 mx-sm-3">Cancelar</button>
+        <button mat-stroked-button color="primary" type="submit" class="mx-0 mx-sm-3">Confirmar</button>
     </div>
 </form>

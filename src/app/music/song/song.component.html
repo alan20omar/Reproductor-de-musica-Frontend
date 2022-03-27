@@ -83,11 +83,11 @@
         [infiniteScrollThrottle]="200"
         (scrolled)="scrollDown()" 
         >
-            <label  for="uploadSong" *ngIf="songList.length==0" class="alert alert-info text-center" role="alert">No hay canciones disponibles! Haz click para agregar</label>
-            <li *ngFor="let song of songList|songsFilter:filter:sort|scrollDown:page" (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active"  [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
+            <label for="uploadSong" *ngIf="songList.length==0" class="alert alert-info text-center" role="alert">No hay canciones disponibles! Haz click para agregar</label>
+            <li *ngFor="let song of songList|songsFilter:filter:sort|scrollDown:page" (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="['/song',song._id]" routerLinkActive="active" [skipLocationChange]="true" title="Añadir a la cola" class="list-group-item list-group-item-action cursor-pointer">
                 <div class="row">
                     <!-- Image -->
-                    <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center">
+                    <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center align-self-center">
                         <!-- <img loading="lazy" [src]="song.imagePath" class="rounded image1" /> -->
                         <img appSetImage [appSong]="song" loading="lazy" [src]="song.imagePath" class="rounded image1" />
                     </div>

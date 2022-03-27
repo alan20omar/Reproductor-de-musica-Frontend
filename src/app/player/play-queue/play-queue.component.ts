@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import NextSong from 'src/app/models/nextSong';
 import SongModel from 'src/app/models/song';
@@ -30,6 +31,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
   constructor( 
     private authService: AuthService,
     private songService: SongService,
+    private router: Router,
     private messService: MessagesService,
   ) { }
 
@@ -42,6 +44,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
         index: this.playerTail.length,
         isLoading: false
       });
+      this.playerTail = [...this.playerTail]; // subject.next or this
       if (!this.playerTail[this.indexActualSong]) this.playNextSong();
       this.saveTailList(); // Guarda la lista en la base de datos.
     }));

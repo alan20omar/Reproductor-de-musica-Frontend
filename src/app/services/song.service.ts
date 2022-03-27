@@ -147,14 +147,8 @@ export class SongService {
       });
       dialogRef.afterClosed().subscribe((updatedSong: SongModel) => {
         if (updatedSong) {
-          this.getImagePathObserver(updatedSong).subscribe((s: any) => {
-            if (s.image)
-              updatedSong.imagePath = this.generateSafeURL(s.image.imageBuffer.data);
-            else
-              updatedSong.imagePath = `${this.apiBaseUrl}/default.png`;
-            Object.assign(song, updatedSong);
-            this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
-          });
+          Object.assign(song, updatedSong);
+          this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
         }
       });
     });

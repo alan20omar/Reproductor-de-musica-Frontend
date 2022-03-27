@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { Router } from '@angular/router';
 import { SongService } from '../../services/song.service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -27,7 +26,6 @@ export class SongComponent implements OnInit, AfterViewInit {
   constructor(
     private songService: SongService,
     private messService: MessagesService,
-    public router: Router,
     private cfr: ComponentFactoryResolver,
   ) { }
   

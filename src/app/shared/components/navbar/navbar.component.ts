@@ -46,9 +46,6 @@ export class NavbarComponent implements OnInit {
     this.authService.logout();
   }
 
-  // changeNavBar(newSelect: string){
-  //   this.songService.navBarSelected = newSelect;
-  // }
   ngOnDestroy(){
     this.isLoggedInSubsciption.unsubscribe();
   }
