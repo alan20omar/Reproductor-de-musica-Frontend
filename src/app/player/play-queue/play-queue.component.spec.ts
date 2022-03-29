@@ -25,7 +25,7 @@ describe('PlayQueueComponent', () => {
   let nextSong: NextSong;
   let songList: SongModel[];
   let apiURL: string;
-  let file: Blob;
+  // let file: Blob;
   let fakeSongService: SongService;
   let fakeMessagesService: MessagesService;
 
@@ -33,7 +33,7 @@ describe('PlayQueueComponent', () => {
     
     fakeMessagesService = jasmine.createSpyObj<MessagesService>('MessagesService', {
       bottomRightAlertSuccess: undefined,
-      centerAlertError: undefined,
+      centerAlert: undefined,
     });
     fakeAuthService = jasmine.createSpyObj<AuthService>('AuthService', {
       patchUser: of(message),
@@ -42,7 +42,7 @@ describe('PlayQueueComponent', () => {
     fakeSongService = jasmine.createSpyObj<SongService>('SongService', {
       songsList: songList,
       apiBaseUrl: apiURL,
-      getFileSong: of(file),
+      // getFileSong: of(file),
       deleteSong: undefined,
       editSong: undefined,
       patchSong: of(song),

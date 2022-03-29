@@ -17,7 +17,7 @@ describe('SongService', () => {
   let baseURL: string;
   let songs: SongModel[];
   let song: SongModel;
-  let file: Blob;
+  // let file: Blob;
   let songImage: SongImageModel;
   let fakeApiConfigService: ApiConfigService;
 
@@ -27,7 +27,7 @@ describe('SongService', () => {
       API_BASE_URL: baseURL,
       getData: of(songs),
       getOneData: of(song),
-      getSong: of(file),
+      // getSong: of(file),
       // postSong: of(httpEvent),
       deleteSong: of(song),
       patchSong: of(song),

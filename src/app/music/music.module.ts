@@ -16,15 +16,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { SongsFilterPipe } from '../music/pipes/songs-filter.pipe';
+import { SongsFilterPipe } from './shared/pipes/songs-filter.pipe';
 
 import { SharedModule } from '../shared/shared.module';
+import { SongListComponent } from './shared/components/song-list/song-list.component';
 
 @NgModule({
   declarations: [
     SongComponent,
     AlbumComponent,
     SongsFilterPipe,
+    SongListComponent,
   ],
   imports: [
     CommonModule,

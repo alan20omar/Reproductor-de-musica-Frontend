@@ -103,6 +103,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.player.volume = volume;
   }
 
+  toggleFavorite(song: SongModel) {
+    this.songService.toggleFavorite(song);
+  }
+
   ngOnDestroy() {
     // prevent memory leak when component is destroyed
     this.subscritions.forEach( (sub) => {

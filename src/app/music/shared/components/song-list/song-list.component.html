@@ -1,0 +1,58 @@
+<ul #ulScroll class="songsList p-0 list-group overflow-auto" infiniteScroll [infiniteScrollContainer]="ulScroll"
+    [infiniteScrollDistance]="1" [infiniteScrollThrottle]="200" (scrolled)="scrollDown()">
+    <label for="uploadSong" *ngIf="songList.length==0" class="alert alert-info text-center" role="alert">No hay
+        canciones disponibles! Haz click para agregar</label>
+    <li *ngFor="let song of songList|songsFilter:filter:sort|scrollDown:page"
+        (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="['/song',song._id]"
+        routerLinkActive="active" [skipLocationChange]="true" title="Añadir a la cola"
+        class="list-group-item list-group-item-action cursor-pointer">
+        <div class="row">
+            <!-- Image -->
+            <div class="col-3 col-sm-2 col-lg-1 col-xl-1 text-center align-self-center">
+                <!-- <img loading="lazy" [src]="song.imagePath" class="rounded image1" /> -->
+                <img appSetImage [appSong]="song" loading="lazy" [src]="song.imagePath" class="rounded image1" />
+            </div>
+            <div class="col-7 col-sm-8 col-lg-9 col-xl-10">
+                <!-- Title -->
+                <h3 class="">{{song.title}}</h3>
+                <!-- Artist -->
+                <span>{{song.artist}}</span>
+            </div>
+            <div class="col-2 col-xl-1">
+                <fa-icon [icon]="['fas','ellipsis-v']" (click)="$event.stopPropagation()"
+                    [matMenuTriggerFor]="optionsMenu" size="lg" title="Opciones {{song.title}}"
+                    class="options-button px-3 py-2 float-end"></fa-icon>
+                <mat-menu #optionsMenu="matMenu" xPosition="before" yPosition="above">
+                    <button mat-menu-item (click)="playSong(song)" title="Reproducir {{song.title}}">
+                        <fa-icon [icon]="['fas','play']" size="lg" class="optionsIcon"></fa-icon>
+                        <span>Reproducir</span>
+                    </button>
+                    <button mat-menu-item (click)="playNextSong(song)" title="Reproducir {{song.title}} a continuación">
+                        <fa-icon [icon]="['fas','step-forward']" size="lg" class="optionsIcon"></fa-icon>
+                        <span>Reproducir a continuación</span>
+                    </button>
+                    <button mat-menu-item (click)="openEditSong(song)" title="Editar {{song.title}}">
+                        <fa-icon [icon]="['fas','edit']" size="lg" class="optionsIcon"></fa-icon>
+                        <span>Editar</span>
+                    </button>
+                    <button *ngIf="!song.favorite" mat-menu-item (click)="toggleFavorite(song); $event.preventDefault()"
+                        title="Añadir {{song.title}} a favorito">
+                        <fa-icon [icon]="['fas','heart']" size="lg" class="optionsIcon"></fa-icon>
+                        <span>Favorito</span>
+                    </button>
+                    <button *ngIf="song.favorite" mat-menu-item (click)="toggleFavorite(song); $event.preventDefault()"
+                        title="Quitar {{song.title}} de favoritos">
+                        <fa-icon [icon]="['fas','heart']" style="color: red" size="lg" class="optionsIcon"></fa-icon>
+                        <span>Favorito</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteSong(song)" title="Eliminar {{song.title}}">
+                        <fa-icon [icon]="['fas','trash-alt']" size="lg" class="optionsIcon"></fa-icon>
+                        <span>Eliminar</span>
+                    </button>
+                </mat-menu>
+                <fa-icon [icon]="['fas','trash-alt']" (click)="deleteSong(song);$event.stopPropagation()" size="lg"
+                    title="Eliminar {{song.title}}" class="delete-button mt-2 d-none d-md-inline float-end"></fa-icon>
+            </div>
+        </div>
+    </li>
+</ul>

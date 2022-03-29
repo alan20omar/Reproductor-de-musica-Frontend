@@ -154,6 +154,22 @@ export class SongService {
     });
   }
 
+  // Toggle song favorite
+  toggleFavorite(song: SongModel) {
+    const formData = new FormData();
+    formData.append('favorite', String(!song.favorite));
+    this.patchSong(song._id, formData).subscribe({
+      next: (patchSong: SongModel) => {
+        song.favorite = patchSong.favorite;
+        this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
+      },
+      error: (error) => {
+        console.error(error);
+        alert(`Ocurrio un error. No se pudo actualizar la canción seleccionada`);
+      }
+    });
+  }
+
   // Patch a song
   patchSong(songId: string, form: FormData): Observable<SongModel>{
     return this.api.patchSong(`songs/${songId}`, form);

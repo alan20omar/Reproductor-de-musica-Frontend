@@ -1,4 +1,11 @@
+<!-- Favorite button -->
+<div *ngIf="!actualSong.song.favorite" [class.disabled]="!actualSong.song.artist" (click)="toggleFavorite(actualSong.song)" class="btn position-absolute m-2 py-2 px-2 rounded-circle" title="Añadir {{actualSong.song.title||''}} a favorito">
+    <fa-icon [icon]="['fas','heart']" size="lg"></fa-icon>
+</div>
+<div *ngIf="actualSong.song.favorite" [class.disabled]="!actualSong.song.artist" (click)="toggleFavorite(actualSong.song)" class="btn position-absolute m-2 py-2 px-2 rounded-circle" title="Quitar {{actualSong.song.title||''}} de favoritos">
+    <fa-icon [icon]="['fas','heart']" style="color: red" size="lg"></fa-icon>
+</div>
 <!-- Image -->
-<img [src]="actualSong.song.imagePath || apiBaseUrl+'/default.png'" class="rounded playerImage" />
+<img appSetImage [appSong]="actualSong.song" [src]="actualSong.song.imagePath" class="rounded playerImage"/>
 <h3>{{actualSong.song.title}}</h3>
 <audio #player (ended)="playNextSong()" (volumechange)="volumeChange(player.volume)" autoplay controls [src]="actualSong.song.filePath" class="playerAudio"></audio>

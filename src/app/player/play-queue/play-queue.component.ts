@@ -218,18 +218,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
   }
 
   toggleFavorite(song: SongModel) {
-    const formData = new FormData();
-    formData.append('favorite', String(!song.favorite));
-    this.songService.patchSong(song._id, formData).subscribe({
-      next: (patchSong: SongModel) => {
-        song.favorite = patchSong.favorite;
-        this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
-      },
-      error: (error) => {
-        console.error(error);
-        alert(`Ocurrio un error. No se pudo actualizar la canción seleccionada`);
-      }
-    });
+    this.songService.toggleFavorite(song);
   }
 
   inputSearchSongChange(input: HTMLInputElement) {

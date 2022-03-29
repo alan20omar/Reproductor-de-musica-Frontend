@@ -7,7 +7,7 @@ import SongModel from '../../models/song';
 import { MessagesService } from '../../services/messages.service';
 
 import { ProgressBarComponent } from '../../shared/components/progress-bar/progress-bar.component';
-import { SongsFilterPipe } from '../pipes/songs-filter.pipe';
+import { SongsFilterPipe } from '../shared/pipes/songs-filter.pipe';
 
 @Component({
   selector: 'app-song',
@@ -18,7 +18,6 @@ export class SongComponent implements OnInit, AfterViewInit {
 
   sort: string = '';
   filter: string = '';
-  page: number = 2;
   private inputChanged: Subject<string> = new Subject<string>();
   subscriptions: Subscription[] = [];
   @ViewChild('uploadMessages', { read: ViewContainerRef }) uploadMessagesRef!: ViewContainerRef;
@@ -63,23 +62,6 @@ export class SongComponent implements OnInit, AfterViewInit {
     this.songService.setImagePath(song);
   }
 
-  playSong(song: SongModel){
-    this.songService.addNextTailSong(song, true);
-  }
-  
-  playNextSong(song: SongModel){
-    this.songService.addNextTailSong(song, false);
-  }
-
-  deleteSong(song: SongModel){
-    this.songService.deleteSong(song._id);
-  }
-  
-  // Añadir cancion a cola
-  addSongToTailList(song: SongModel){
-    this.songService.addTailSong(song);
-  }
-
   playAllSongs(){
     const filterPipe = new SongsFilterPipe();
     this.songService.addNewTailSong(filterPipe.transform(this.songList, this.filter, this.sort));
@@ -105,30 +87,6 @@ export class SongComponent implements OnInit, AfterViewInit {
 
   changeSortList(sort: string){
     this.sort = sort;
-  }
-
-  openEditSong(song: SongModel) {
-    this.songService.editSong(song);
-  }
-  
-  toggleFavorite(song: SongModel) {
-    const formData = new FormData();
-    formData.append('favorite', String(!song.favorite));
-    this.songService.patchSong(song._id, formData).subscribe({
-      next: (patchSong: SongModel) => {
-        song.favorite = patchSong.favorite;
-        this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
-      },
-      error: (error) => {
-        console.error(error);
-        alert(`Ocurrio un error. No se pudo actualizar la canción seleccionada`);
-      }
-    });
-  }
-
-  scrollDown(){
-    this.page += 1;
-    console.log('scrolled')
   }
 
   createProgressUploadSong(name: string): ComponentRef<ProgressBarComponent>{
