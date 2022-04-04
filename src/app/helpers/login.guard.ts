@@ -17,7 +17,7 @@ export class LoginGuard implements CanLoad {
     segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const authToken: boolean = this.cookieService.check(this.authTokenName);
     if (authToken) {
-      this.router.navigate(['song']);
+      this.router.navigate(['music','song','id']);
       alert('Ya existe una sessión activa');
       return false;
     }

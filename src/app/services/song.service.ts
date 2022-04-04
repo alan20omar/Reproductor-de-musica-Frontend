@@ -123,9 +123,6 @@ export class SongService {
     this.api.deleteSong(`songs/${songId}`).subscribe({
       next: (deletedSong: SongModel) => {
         this.songsList = this.songsList.filter(song => song._id != deletedSong._id);
-        // this.songsList.forEach((song, index) => {
-        //   if (song._id === deletedSong._id) this.songsList.splice(index, 1);
-        // });
         this.deleteTailSong(deletedSong);
         this.messService.bottomRightAlertSuccess(`<span style="color: red"><strong>${deletedSong.title}</strong></span> eliminado correctamente`);
       },

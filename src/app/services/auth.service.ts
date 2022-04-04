@@ -41,7 +41,7 @@ export class AuthService {
         if (nextUrl)
           this.router.navigate([nextUrl]);
         else
-          this.router.navigate(['/']);
+          this.router.navigate(['music','song','id']);
       },
       error: (error) => {
         alert(error.error);

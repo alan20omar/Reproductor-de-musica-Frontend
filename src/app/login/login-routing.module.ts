@@ -7,7 +7,7 @@ const routes: Routes = [
   {path: '', children: [
     {path: '', component: LoginComponent},
     // {path: 'logout', component: LoginComponent, canActivate: [AuthGuardGuard] },
-    {path: '**', redirectTo: ''}
+    {path: '**', redirectTo: 'error'}
   ]}
 ];
 

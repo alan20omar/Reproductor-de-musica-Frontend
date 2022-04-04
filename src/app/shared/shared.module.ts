@@ -15,6 +15,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ScrollDownPipe } from './pipes/scroll-down.pipe';
 import { SetImageDirective } from './directives/set-image.directive';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -23,11 +25,13 @@ import { SetImageDirective } from './directives/set-image.directive';
     ProgressBarComponent,
     SetImageDirective,
     ScrollDownPipe,
+    ErrorPageComponent,
   ],
   imports: [
     CommonModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    RouterModule.forChild([]),
     // Angular Material
     MatInputModule,
     MatDividerModule,
@@ -39,6 +43,7 @@ import { SetImageDirective } from './directives/set-image.directive';
     NavbarComponent,
     EditSongComponent,
     ProgressBarComponent,
+    ErrorPageComponent,
     SetImageDirective,
     ScrollDownPipe,
   ]

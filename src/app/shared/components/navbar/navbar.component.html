@@ -6,10 +6,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav w-100">
-                <div (click)="changeUrl('song')" [class.active]="urlActiva=='song'" class="nav-link cursor-pointer">Songs</div>
+                <!-- <div (click)="changeUrl('song')" [class.active]="urlActiva=='song'" class="nav-link cursor-pointer">Songs</div>
                 <div (click)="changeUrl('album')" [class.active]="urlActiva=='album'" class="nav-link cursor-pointer">Albums</div>
                 <div (click)="changeUrl('artist')" [class.active]="urlActiva=='artist'" class="nav-link cursor-pointer">Artists</div>
-                <div (click)="changeUrl('genre')" [class.active]="urlActiva=='genre'" class="nav-link cursor-pointer">Genre</div>
+                <div (click)="changeUrl('genre')" [class.active]="urlActiva=='genre'" class="nav-link cursor-pointer">Genre</div> -->
+                <div [routerLink]="['music','song','id']" routerLinkActive="active" [skipLocationChange]="false" class="nav-link cursor-pointer">Songs</div>
+                <div [routerLink]="['music','album','id']" routerLinkActive="active" [skipLocationChange]="false" class="nav-link cursor-pointer">Albums</div>
+                <div [routerLink]="['music','artist','id']" routerLinkActive="active" [skipLocationChange]="false" class="nav-link cursor-pointer">Artists</div>
+                <div [routerLink]="['music','genre','id']" routerLinkActive="active" [skipLocationChange]="false" class="nav-link cursor-pointer">Genre</div>
                 <div (click)="logout()" class="nav-link cursor-pointer" style="margin-left: auto;">Cerrar sesión</div>
             </div>
         </div>

@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { debounceTime, Subject, Subscription } from 'rxjs';
+import SongModel from 'src/app/models/song';
+import { MessagesService } from 'src/app/services/messages.service';
+import { SongService } from 'src/app/services/song.service';
+import { ProgressBarComponent } from 'src/app/shared/components/progress-bar/progress-bar.component';
+import { SongsAttrFilterPipe } from '../shared/pipes/songs-attr-filter.pipe';
 
 @Component({
   selector: 'app-album',
@@ -9,83 +13,87 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class AlbumComponent implements OnInit {
 
-  // Toggle paswords inputs
-  // isChangePass: boolean = false;
-  // newImage!: SafeUrl;
-  // updateUserForm!: FormGroup;
+  private inputChanged: Subject<string> = new Subject<string>();
+  subscriptions: Subscription[] = [];
+  @ViewChild('uploadMessages', { read: ViewContainerRef }) uploadMessagesRef!: ViewContainerRef;
+  sort: string = 'a-z';
+  filter: string = '';
+  page: number = 2;
+  albumActive: string = '';
 
-  // user = {
-  //   firstName: 'first name',
-  //   lastName: 'last name',
-  //   email: 'email@email.com',
-  //   photo: 'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-  //   location: {
-  //     pais: "México",
-  //     cp: "53428",
-  //     estado: "México",
-  //     municipioAlcaldia: "Naucalpan",
-  //     colonia: "Las huertas",
-  //     calle: "Av. San juan",
-  //     entreCalle1: "calle spo",
-  //     entreCalle2: "Av. Las palmas 1",
-  //     numeroExterior: "sn",
-  //     numeroInterior: "sn",
-  //     destinatario: "Alan",
-  //     telefono: "5553467982",
-  //     detallesDeEntrega: "Porton rojo, timbre 4, cuidado con el perro xd",
-  //   }
-  // }
-
-  constructor() { }
+  constructor(
+    private songService: SongService,
+    private messService: MessagesService,
+    private cfr: ComponentFactoryResolver,
+  ) { }
 
   ngOnInit(): void {
-    // this.updateUserForm = this.formBuilder.group({
-    //   firstName: [this.user.firstName, Validators.required],
-    //   lastName: [this.user.lastName, Validators.required],
-    //   email: [this.user.email, [Validators.required, Validators.email]],
-    //   photo: [],
-    //   //location
-    //   destinatario: [this.user.location.destinatario, Validators.required],
-    //   telefono: [this.user.location.telefono, [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-    //   pais: [{ value: this.user.location.pais, disabled: true }, Validators.required],
-    //   cp: [this.user.location.cp, [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
-    //   estado: [this.user.location.estado, Validators.required],
-    //   municipioAlcaldia: [this.user.location.municipioAlcaldia, Validators.required],
-    //   colonia: [this.user.location.colonia, Validators.required],
-    //   calle: [this.user.location.calle, Validators.required],
-    //   entreCalle1: [this.user.location.entreCalle1],
-    //   entreCalle2: [this.user.location.entreCalle2],
-    //   numeroExterior: [this.user.location.numeroExterior],
-    //   numeroInterior: [this.user.location.numeroInterior],
-    //   detallesDeEntrega: [this.user.location.detallesDeEntrega],
-    // });
+    this.subscriptions.push(this.inputChanged.pipe(debounceTime(200))
+      .subscribe((value: string) => {
+        this.filter = value;
+      }));
   }
 
-  // changePerfilImage(inputHtml: HTMLInputElement) {
-  //   if (inputHtml.files && inputHtml.files[0]) {
-  //     this.newImage = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(inputHtml.files[0]));
-  //     this.updateUserForm.patchValue({ photo: inputHtml.files[0] })
-  //   }
-  // }
+  get songList(): SongModel[] {
+    return this.songService.songsList;
+  }
 
-  // sendData() {
-  //   if (this.updateUserForm.invalid) {
-  //     alert('No se aceptan campos invalidos');
-  //     return;
-  //   }
-  //   // Convertir el form group en form data
-  //   let formData = new FormData();
-  //   formData = this.toFormData(this.updateUserForm.value);
-  //   alert('Formulario correcto');
-  // }
+  addSong(input: HTMLInputElement) {
+    if (!input.value || !input.files) {
+      this.messService.centerAlert('Por favor añade una canción', 'Archivo no seleccionado', 'warning');
+      return;
+    }
+    Array.from(input.files).forEach(file => {
+      const compProgressRef: ComponentRef<ProgressBarComponent> = this.createProgressUploadSong(file.name);
+      this.songService.addNewSong(file, compProgressRef);
+    });
+    input.value = '';
+    input.files = null;
+  }
 
-  // toFormData(formValue: any) {
-  //   const formData = new FormData();
-  //   for (const key of Object.keys(formValue)) {
-  //     const value = formValue[key];
-  //     formData.append(key, value);
-  //   }
-  //   return formData;
-  // }
+  playAllSongs() {
+    const filterPipe = new SongsAttrFilterPipe();
+    this.songService.addNewTailSong(filterPipe.transform(this.songList, 'album', this.filter, this.sort));
+  }
+
+  playAllRandom() {
+    const filterPipe = new SongsAttrFilterPipe();
+    this.songService.addNewTailSong(filterPipe.transform(this.songList, 'album', this.filter).sort(() => (Math.random() > 0.5) ? 1 : -1));
+  }
+
+  changeSortList(sort: string) {
+    this.sort = sort;
+  }
+
+  inputSearchSongChange(input: HTMLInputElement) {
+    this.inputChanged.next(input.value);
+  }
+
+  clickCleanSearchSong(input: HTMLInputElement) {
+    input.value = '';
+    this.filter = '';
+  }
+
+  selectAlbum(album: string){
+    this.albumActive = album;
+  }
+
+  scrollDown() {
+    this.page += 1;
+    console.log('scrolled album');
+  }
+
+  createProgressUploadSong(name: string): ComponentRef<ProgressBarComponent> {
+    const compFactory: ComponentFactory<ProgressBarComponent> = this.cfr.resolveComponentFactory(ProgressBarComponent);
+    const compRef: ComponentRef<ProgressBarComponent> = this.uploadMessagesRef.createComponent(compFactory);
+    compRef.instance.title = name;
+    return compRef;
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => {
+      sub.unsubscribe();
+    });
+  }
 
 }

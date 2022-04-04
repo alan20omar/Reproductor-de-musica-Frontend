@@ -80,8 +80,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       });
     }
-    const match = this.router.url.match(this.regexSongId);
-    if (match) this.router.navigate([match[1], this.actualSong.song._id]);
+    // const match = this.router.url.match(this.regexSongId);
+    // if (match) this.router.navigate([match[1], this.actualSong.song._id]);
   }
 
   playNextSong(){
@@ -91,8 +91,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   resetPlayer(){
     this.changeActualIndexEvent.emit(-1);
     this.actualSong = { index: -1, isLoading: false, song: { title: 'Reproductor', favorite: false, imagePath: `${this.apiBaseUrl}/default.png` } as unknown as SongModel }
-    const match = this.router.url.match(this.regexSongId);
-    if (match) this.router.navigate([match[1]]);
+    // const match = this.router.url.match(this.regexSongId);
+    // if (match) this.router.navigate([match[1]]);
   }
 
   volumeChange(volume: number){

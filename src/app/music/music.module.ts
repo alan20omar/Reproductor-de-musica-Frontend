@@ -20,6 +20,8 @@ import { SongsFilterPipe } from './shared/pipes/songs-filter.pipe';
 
 import { SharedModule } from '../shared/shared.module';
 import { SongListComponent } from './shared/components/song-list/song-list.component';
+import { AlbumArtistGenreFilterPipe } from './shared/pipes/album-artist-genre-filter.pipe';
+import { SongsAttrFilterPipe } from './shared/pipes/songs-attr-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,8 @@ import { SongListComponent } from './shared/components/song-list/song-list.compo
     AlbumComponent,
     SongsFilterPipe,
     SongListComponent,
+    AlbumArtistGenreFilterPipe,
+    SongsAttrFilterPipe,
   ],
   imports: [
     CommonModule,

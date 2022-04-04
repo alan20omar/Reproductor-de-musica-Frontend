@@ -1,153 +1,86 @@
-<!-- <div class="container my-5">
-    <form (submit)="sendData()" [formGroup]="updateUserForm">
-        <div class="row justify-content-center position-relative">
-            <img class="img-user" [src]="newImage||user.photo" alt="">
-            <button mat-fab (click)="selectImage.click()" type="button"
-                class="imageCenter position-absolute">Cambiar</button>
-            <input #selectImage (change)="changePerfilImage(selectImage)" type="file" accept=".png,.jpg,.jpeg" class="d-none">
-        </div>
-        <div *ngIf="updateUserForm.get('photo')?.value" class="w-100 mt-4 text-center">
-            <button mat-raised-button [disabled]="updateUserForm.invalid" color="primary" type="submit"
-                class="mx-auto">Aplicar cambios</button>
-        </div>
-        <h3 class="mt-3">Datos personales</h3>
-        <mat-divider></mat-divider>
-        <div class="row mt-3">
-            <div class="mb-2 col-12 col-sm-6 col-md-4">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Nombre(s)</mat-label>
-                    <input matInput formControlName="firstName">
-                    <mat-error *ngIf="updateUserForm.get('firstName')?.errors?.['required']">Por favor ingreasa un
-                        nombre valido</mat-error>
-                </mat-form-field>
+<div class="row mt-5">
+    <div class="col-12 my-3">
+        <div #uploadMessages></div>
+    </div>
+    <h2 class="col-12 m-0 text-center">Albumes</h2>
+    <!-- Controles de la lista de canciones-->
+    <div class="col-12">
+        <div class="row p-3 my-3 bg-dark align-items-center rounded">
+            <!-- Play all -->
+            <div class="col-4 col-md-3 col-lg-1 col-xl-2">
+                <div (click)="playAllSongs()" class="w-100 p-2 btn btn-secondary" title="Reproducir todos">
+                    <fa-icon [icon]="['far','play-circle']" size="lg" class="mx-2"></fa-icon>
+                    <span class="d-none d-md-inline d-lg-none d-xl-inline">Play all</span>
+                </div>
             </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Apellidos</mat-label>
-                    <input matInput formControlName="lastName">
-                    <mat-error *ngIf="updateUserForm.get('lastName')?.errors?.['required']">Por favor ingreasa un
-                        apellido valido</mat-error>
-                </mat-form-field>
+            <!-- Play all random -->
+            <div class="col-4 col-md-3 col-lg-1 col-xl-2">
+                <div (click)="playAllRandom()" class="w-100 p-2 btn btn-secondary" title="Reproducir todos aletoriamente">
+                    <fa-icon [icon]="['fas','random']" size="lg" class="mx-2"></fa-icon>
+                    <span class="d-none d-md-inline d-lg-none d-xl-inline">Play random</span>
+                </div>
             </div>
-            <div class="mb-2 col-12 col-md-4">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Correo</mat-label>
-                    <input type="email" matInput placeholder="Ej. baktún@example.com" formControlName="email">
-                    <mat-error *ngIf="updateUserForm.get('email')?.errors?.['required']">Por favor ingreasa un correo
-                    </mat-error>
-                    <mat-error *ngIf="updateUserForm.get('email')?.errors?.['email']">Por favor ingreasa un correo
-                        valido</mat-error>
-                </mat-form-field>
+            <!-- Sort list of songs -->
+            <div class="col-4 col-md-2 col-lg-1">
+                <ng-template [ngIf]="sort=='a-z'" [ngIfElse]="sortZA">
+                    <div (click)="changeSortList('z-a')" class="w-100 p-2 btn btn-secondary"
+                        title="Ordenar inverso al alfabeto">
+                        <fa-icon [icon]="['fas','sort-alpha-down-alt']" size="lg" class="mx-2"></fa-icon>
+                    </div>
+                </ng-template>
+                <ng-template #sortZA>
+                    <div (click)="changeSortList('a-z')" class="w-100 p-2 btn btn-secondary"
+                        title="Ordenar alfabeticamente">
+                        <fa-icon [icon]="['fas','sort-alpha-down']" size="lg" class="mx-2"></fa-icon>
+                    </div>
+                </ng-template>
             </div>
-        </div>
-        <h3>Dirección</h3>
-        <mat-divider></mat-divider>
-        <div class="row mt-3">
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Nombre de quien recibe</mat-label>
-                    <input matInput formControlName="destinatario">
-                    <mat-error *ngIf="updateUserForm.get('destinatario')?.errors?.['required']">Por favor ingreasa un
-                        nombre</mat-error>
-                </mat-form-field>
+            <!-- Search song -->
+            <div class="col-12 mt-3 col-md-4 m-md-0 col-xl-3">
+                <div class="input-group" title="Buscar">
+                    <label class="input-group-text" for="buscar1">
+                        <fa-icon [icon]="['fas','search']" size="lg"></fa-icon>
+                    </label>
+                    <input #searchSong (input)="inputSearchSongChange(searchSong)" type="text"
+                        class="border-0 form-control" placeholder="Album" id="buscar1">
+                    <label #cleanSearchSong [hidden]="!searchSong.value" (click)="clickCleanSearchSong(searchSong)"
+                        title="limpiar" class="border-0 bg-white input-group-text" for="buscar1">
+                        <fa-icon [icon]="['fas','trash-alt']" size="lg"></fa-icon>
+                    </label>
+                </div>
             </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Telefono</mat-label>
-                    <input matInput formControlName="telefono">
-                    <mat-error *ngIf="updateUserForm.get('telefono')?.errors?.['required']">Por favor ingreasa un
-                        telefono</mat-error>
-                    <mat-error *ngIf="updateUserForm.get('telefono')?.errors?.['pattern']">Debe contener exactamente 10
-                        digitos</mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Pais</mat-label>
-                    <input matInput formControlName="pais">
-                    <mat-error *ngIf="updateUserForm.get('pais')?.errors?.['required']">Por favor ingreasa un Pais
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Codigo Postal</mat-label>
-                    <input matInput formControlName="cp">
-                    <mat-error *ngIf="updateUserForm.get('cp')?.errors?.['required']">Por favor ingreasa un codigo
-                        postal</mat-error>
-                    <mat-error *ngIf="updateUserForm.get('cp')?.errors?.['pattern']">Debe contener exactamente 5 digitos
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Estado</mat-label>
-                    <input matInput formControlName="estado">
-                    <mat-error *ngIf="updateUserForm.get('estado')?.errors?.['required']">Por favor ingreasa un Estado
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Municipio / Alcaldia</mat-label>
-                    <input matInput formControlName="municipioAlcaldia">
-                    <mat-error *ngIf="updateUserForm.get('municipioAlcaldia')?.errors?.['required']">Por favor ingreasa
-                        un Municipio o Alcaldia</mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Colonia</mat-label>
-                    <input matInput formControlName="colonia">
-                    <mat-error *ngIf="updateUserForm.get('colonia')?.errors?.['required']">Por favor ingreasa una
-                        Colonia</mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Calle</mat-label>
-                    <input matInput formControlName="calle">
-                    <mat-error *ngIf="updateUserForm.get('calle')?.errors?.['required']">Por favor ingreasa una Calle
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Entre calle</mat-label>
-                    <input matInput formControlName="entreCalle1" placeholder="Opcional">
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Y entre calle</mat-label>
-                    <input matInput formControlName="entreCalle2" placeholder="Opcional">
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Número exterior</mat-label>
-                    <input matInput formControlName="numeroExterior" placeholder="SN">
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Número interior</mat-label>
-                    <input matInput formControlName="numeroInterior" placeholder="SN">
-                    <mat-error *ngIf="true">
-                        Please enter a valid email address
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="mb-2 col-12">
-                <mat-form-field class="w-100" appearance="fill">
-                    <mat-label>Detalles adicionales</mat-label>
-                    <textarea matInput formControlName="detallesDeEntrega" placeholder="Opcional"></textarea>
-                </mat-form-field>
+            <!-- Upload song -->
+            <div class="col-12 mt-3 col-lg-5 m-lg-0 col-xl-4">
+                <div class="input-group">
+                    <input #newSong type="file" multiple="multiple" accept=".mp3" id="uploadSong" class="form-control">
+                    <button (click)="addSong(newSong)" class="btn btn-primary" type="button">Agragar</button>
+                </div>
             </div>
         </div>
-        <div class="w-100 text-center">
-            <button mat-raised-button [disabled]="updateUserForm.invalid" color="primary" type="submit"
-                class="mx-auto">Aplicar cambios</button>
-        </div>
-    </form>
-</div> -->
+    </div>
+    <!-- Fin controles de la lista de canciones-->
+    <div class="col-12">
+        <label for="uploadSong" *ngIf="!(songList|albumArtistGenreFilter:'album':filter:sort)" class="w-100 alert alert-info text-center" role="alert">
+            No hay albumes disponibles! Haz click para agregar
+        </label>
+        <ul #ulScroll class="rowList p-0 list-group">
+            <li *ngFor="let item of songList|albumArtistGenreFilter:'album':filter:sort|scrollDown:page" infiniteScroll [scrollWindow]="false" [horizontal]="true" [infiniteScrollContainer]="ulScroll"
+            [infiniteScrollDistance]="1" [infiniteScrollThrottle]="200" (scrolled)="scrollDown()"
+                (click)="selectAlbum(item[0]);$event.preventDefault();" title="Añadir a la cola"
+                [class.active]="item[0]===albumActive"
+                class="list-group-item list-group-item-action cursor-pointer rounded">
+                <!-- Image -->
+                <div class="rowImage">
+                    <img appSetImage [appSong]="item[1][0]" loading="lazy" [src]="item[1][0].imagePath" class="rounded image1" />
+                </div>
+                <div class="rowData p-2">
+                    <!-- Title -->
+                    <h3 class="mb-2">{{item[0].slice(0,20)}}</h3>
+                    <!-- Artist -->
+                    <span>{{item[1][0].artist}}</span>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <app-song-list *ngIf="albumActive" [songList]="songList|songsAttrFilter:'album':albumActive" [attrList]="'album'"></app-song-list>
+</div>

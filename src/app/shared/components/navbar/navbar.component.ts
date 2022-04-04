@@ -11,8 +11,8 @@ import { SongService } from '../../../services/song.service';
 })
 export class NavbarComponent implements OnInit {
 
-  urlActiva: string = '';
-  regexSongId = new RegExp('^\/(song|artist|genre|album)\/([0-9a-zA-Z]+)$');
+  // urlActiva: string = '';
+  // regexSongId = new RegExp('^\/(song|artist|genre|album)\/([0-9a-zA-Z]+)$');
   isLoggedInSubsciption!: Subscription;
 
   constructor(
@@ -31,16 +31,16 @@ export class NavbarComponent implements OnInit {
     console.log('actualiced navbar');
   }
 
-  changeUrl(kind: string){
-    const url = this.router.url;
-    let songId = '';
-    const match = url.match(this.regexSongId);
-    if (match){
-      songId = match[2];
-    }
-    this.router.navigate([kind,songId])
-    this.urlActiva = kind;
-  }
+  // changeUrl(kind: string){
+  //   const url = this.router.url;
+  //   let songId = '';
+  //   const match = url.match(this.regexSongId);
+  //   if (match){
+  //     songId = match[2];
+  //   }
+  //   this.router.navigate([kind,songId])
+  //   this.urlActiva = kind;
+  // }
 
   logout(){
     this.authService.logout();
