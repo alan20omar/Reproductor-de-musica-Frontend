@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -9,10 +8,7 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   title = 'backend';
-  isLoggedIn$: Observable<boolean>;
   constructor(
     private authService: AuthService, 
-  ){ 
-    this.isLoggedIn$ = this.authService.isLoggedIn;
-  }
+  ){ }
 }

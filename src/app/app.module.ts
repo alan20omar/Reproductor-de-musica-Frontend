@@ -19,7 +19,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { GeneralInterceptor } from './helpers/general.interceptor';
 import { PreventDuplicateRequestInterceptor } from './helpers/prevent-duplicate-request.interceptor';
 
-import { PlayerModule } from './player/player.module';
 import { SharedModule } from './shared/shared.module';
 import { CommonModule } from '@angular/common';
 
@@ -35,7 +34,6 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    PlayerModule,
     SharedModule,
     // HttpClientXsrfModule.withOptions({ cookieName: 'csrftoken', headerName: 'X-CSRFToken' }),
   ],

@@ -22,6 +22,8 @@ import { SharedModule } from '../shared/shared.module';
 import { SongListComponent } from './shared/components/song-list/song-list.component';
 import { AlbumArtistGenreFilterPipe } from './shared/pipes/album-artist-genre-filter.pipe';
 import { SongsAttrFilterPipe } from './shared/pipes/songs-attr-filter.pipe';
+import { MusicComponent } from './music.component';
+import { PlayerModule } from '../player/player.module';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,7 @@ import { SongsAttrFilterPipe } from './shared/pipes/songs-attr-filter.pipe';
     SongListComponent,
     AlbumArtistGenreFilterPipe,
     SongsAttrFilterPipe,
+    MusicComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +42,7 @@ import { SongsAttrFilterPipe } from './shared/pipes/songs-attr-filter.pipe';
     ReactiveFormsModule,
     FontAwesomeModule,
     SharedModule,
+    PlayerModule,
     // Angular Material
     MatInputModule,
     MatDividerModule,
