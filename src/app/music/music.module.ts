@@ -24,6 +24,10 @@ import { AlbumArtistGenreFilterPipe } from './shared/pipes/album-artist-genre-fi
 import { SongsAttrFilterPipe } from './shared/pipes/songs-attr-filter.pipe';
 import { MusicComponent } from './music.component';
 import { PlayerModule } from '../player/player.module';
+import { ArtistComponent } from './artist/artist.component';
+import { GenreComponent } from './genre/genre.component';
+import { FavoriteComponent } from './favorite/favorite.component';
+import { CardAttrListComponent } from './shared/components/card-attr-list/card-attr-list.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +38,10 @@ import { PlayerModule } from '../player/player.module';
     AlbumArtistGenreFilterPipe,
     SongsAttrFilterPipe,
     MusicComponent,
+    ArtistComponent,
+    GenreComponent,
+    FavoriteComponent,
+    CardAttrListComponent,
   ],
   imports: [
     CommonModule,

@@ -17,7 +17,8 @@ export class SongComponent implements OnInit {
     
   }
   
-  get songList(): SongModel[]{
+  get songList(): SongModel[] {
+    // console.log('ejecuta')
     return this.songService.songsList;
   }
 }

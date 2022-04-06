@@ -6,8 +6,11 @@ import SongModel from 'src/app/models/song';
 })
 export class SongsAttrFilterPipe implements PipeTransform {
 
-  transform(songsLi: SongModel[], attr: string = '', filter: string = '', sort: string = ''): SongModel[] {
+  transform(songsLi: SongModel[], attr: string = '', attrFilter: string = '', filter: string = '', sort: string = ''): SongModel[] {
     let songsList: any[] = [...songsLi];
+    if (attrFilter) {
+      songsList = songsList.filter((song) => song[attr].toLowerCase() === attrFilter.toLowerCase());
+    }
     if (filter) {
       songsList = songsList.filter((song) => song[attr].toLowerCase().includes(filter.toLowerCase()));
     }
