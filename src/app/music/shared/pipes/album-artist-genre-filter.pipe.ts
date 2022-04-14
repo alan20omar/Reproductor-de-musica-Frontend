@@ -6,8 +6,8 @@ import SongModel from 'src/app/models/song';
 })
 export class AlbumArtistGenreFilterPipe implements PipeTransform {
 
-  transform(songLi: SongModel[], attr: string, filter: string = '', sort: string = ''): any[] {
-    let songList: any[] = [...songLi];
+  transform(songList: any[], attr: string, filter: string = '', sort: string = ''): any[] {
+    // let songList: any[] = [...songLi];
     if (filter) {
       songList = songList.filter((song) => song[attr].toLowerCase().includes(filter.toLowerCase()));
     }

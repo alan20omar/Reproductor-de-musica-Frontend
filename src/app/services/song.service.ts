@@ -1,7 +1,7 @@
 import { ComponentRef, Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, first, Observable, Subject } from 'rxjs';
 
 import SongModel from '../models/song';
 import NextSong from '../models/nextSong';
@@ -21,16 +21,21 @@ import SongImageModel from '../models/songImage';
 })
 export class SongService {
 
-  private _songsList: SongModel[] = [];
-  get songsList(): SongModel[]{
-    return this._songsList;
+  private _songsList: BehaviorSubject<SongModel[]> = new BehaviorSubject<SongModel[]>([]);
+  get songsList$(): Observable<SongModel[]>{
+    return this._songsList.asObservable();
   }
-  set songsList(songList: SongModel[]){
-    this._songsList = songList;
+  setNextSongsList(songList: SongModel[]){
+    // console.log(this._songsList.value)
+    this._songsList.next(songList)
   }
   pushNewSong(newSong: SongModel): void{
-    this._songsList.push(newSong);
-    this._songsList = [...this._songsList]; // subject.next or this
+    this.songsList$.pipe(first()).subscribe((songsList: SongModel[]) => {
+      songsList.push(newSong);
+      this._songsList.next([...songsList]);
+    });
+    // this._songsList.push(newSong);
+    // this._songsList = [...this._songsList]; // subject.next or this
   }
 
   // Observable para añadir cancion a cola
@@ -63,10 +68,8 @@ export class SongService {
   // Fetch all data songs available
   getAllAvailableSongs(): void{
     this.api.getData('songs/').subscribe((songs: SongModel[]) => {
-      this.songsList = songs;
-      // songs.forEach((song) => {
-      //   this.setImagePath(song);
-      // });
+      this.setNextSongsList(songs);
+      // this.songsList = songs;
     });
   }
 
@@ -122,7 +125,10 @@ export class SongService {
   deleteSong(songId: string){
     this.api.deleteSong(`songs/${songId}`).subscribe({
       next: (deletedSong: SongModel) => {
-        this.songsList = this.songsList.filter(song => song._id != deletedSong._id);
+        this.songsList$.pipe(first()).subscribe((songsList: SongModel[]) => {
+          this.setNextSongsList(songsList.filter(song => song._id != deletedSong._id));
+        });
+        // this.songsList = this.songsList.filter(song => song._id != deletedSong._id);
         this.deleteTailSong(deletedSong);
         this.messService.bottomRightAlertSuccess(`<span style="color: red"><strong>${deletedSong.title}</strong></span> eliminado correctamente`);
       },
@@ -146,6 +152,7 @@ export class SongService {
         if (updatedSong) {
           Object.assign(song, updatedSong);
           this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
+          this._songsList.next([...this._songsList.value]); // Actualiza la lista
         }
       });
     });
@@ -158,6 +165,7 @@ export class SongService {
     this.patchSong(song._id, formData).subscribe({
       next: (patchSong: SongModel) => {
         song.favorite = patchSong.favorite;
+        this._songsList.next([...this._songsList.value]); // Actualiza la lista
         this.messService.bottomRightAlertSuccess(`<strong>${song.title}</strong> editado correctamente`);
       },
       error: (error) => {

@@ -1,2 +1,2 @@
 <h2 class="col-12 m-0 mt-5 text-center">Canciones</h2>
-<app-song-list [songList]="songList"></app-song-list>
+<app-song-list [songList]="(songsList$|async)!"></app-song-list>

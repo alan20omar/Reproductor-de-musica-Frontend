@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SongService } from '../../services/song.service';
 import SongModel from '../../models/song';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-song',
@@ -8,17 +9,13 @@ import SongModel from '../../models/song';
   styleUrls: ['./song.component.scss']
 })
 export class SongComponent implements OnInit {
-  
+  songsList$!: Observable<SongModel[]>;
   constructor(
     private songService: SongService,
   ) { }
   
   ngOnInit(): void { 
-    
+    this.songsList$ = this.songService.songsList$;
   }
-  
-  get songList(): SongModel[] {
-    // console.log('ejecuta')
-    return this.songService.songsList;
-  }
+
 }

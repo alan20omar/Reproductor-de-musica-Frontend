@@ -60,12 +60,15 @@
     </div>
     <!-- Fin controles de la lista de canciones-->
     <div class="col-12">
-        <label for="uploadSong" *ngIf="!(songList|albumArtistGenreFilter:attr:filter:sort)"
+        <label for="uploadSong" *ngIf="!(songsList$|async)!.length"
             class="w-100 alert alert-info text-center" role="alert">
-            No hay canciones de este {{attr}}! Haz click para agregar
+            No hay canciones disponibles!. Haz click para agregar
         </label>
+        <div *ngIf="!((songsList$|async)!|albumArtistGenreFilter:attr:filter).length&&(songsList$|async)!.length" class="alert alert-info text-center" role="alert">
+            ¡No hay {{attr}} que coincida con <strong>{{searchSong.value}}</strong>!
+        </div>
         <ul #ulScroll class="rowList p-0 list-group">
-            <li *ngFor="let item of songList|albumArtistGenreFilter:attr:filter:sort|scrollDown:page" infiniteScroll
+            <li *ngFor="let item of (songsList$|async)!|albumArtistGenreFilter:attr:filter:sort|scrollDown:page" infiniteScroll
                 [scrollWindow]="false" [horizontal]="true" [infiniteScrollContainer]="ulScroll"
                 [infiniteScrollDistance]="1" [infiniteScrollThrottle]="200" (scrolled)="scrollDown()"
                 (click)="selectAttr(item[0]);$event.preventDefault();" title="Abrir lista de canciones para el {{attr}} {{item[1][0][attr]}}"
@@ -85,5 +88,6 @@
             </li>
         </ul>
     </div>
-    <app-song-list *ngIf="attrActiveName" [songList]="songList|songsAttrFilter:attr:attrActiveName" [attrList]="attr"></app-song-list>
+    <!-- <app-song-list *ngIf="attrActiveName&&((songsList$|async)!|songsAttrFilter:attr:attrActiveName).length" [songList]="(songsList$|async)!|songsAttrFilter:attr:attrActiveName" [attrList]="attr"></app-song-list> -->
+    <app-song-list *ngIf="attrActiveName" [songList]="(songsList$|async)!|songsAttrFilter:attr:attrActiveName" [attrList]="attr"></app-song-list>
 </div>

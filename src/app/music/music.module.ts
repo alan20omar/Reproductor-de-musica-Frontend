@@ -28,6 +28,7 @@ import { ArtistComponent } from './artist/artist.component';
 import { GenreComponent } from './genre/genre.component';
 import { FavoriteComponent } from './favorite/favorite.component';
 import { CardAttrListComponent } from './shared/components/card-attr-list/card-attr-list.component';
+import { FavoriteSongsFilterPipe } from './shared/pipes/favorite-songs-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { CardAttrListComponent } from './shared/components/card-attr-list/card-a
     GenreComponent,
     FavoriteComponent,
     CardAttrListComponent,
+    FavoriteSongsFilterPipe,
   ],
   imports: [
     CommonModule,

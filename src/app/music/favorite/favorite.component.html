@@ -1,2 +1,2 @@
 <h2 class="col-12 m-0 mt-5 text-center">Favoritos</h2>
-<app-song-list [songList]="favSongList"></app-song-list>
+<app-song-list [songList]="((songsList$|async)!)|favoriteSongsFilter"></app-song-list>

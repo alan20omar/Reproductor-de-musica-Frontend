@@ -61,8 +61,12 @@
     <div class="col-12">
         <ul #ulScroll class="songsList p-0 list-group overflow-auto" infiniteScroll [infiniteScrollContainer]="ulScroll" [scrollWindow]="false"
             [infiniteScrollDistance]="1" [infiniteScrollThrottle]="200" (scrolled)="scrollDown()">
-            <label for="uploadSong" *ngIf="songList.length==0" class="alert alert-info text-center" role="alert">No hay
-                canciones disponibles! Haz click para agregar</label>
+            <label for="uploadSong" *ngIf="!songList.length" class="alert alert-info text-center" role="alert">No hay
+                canciones disponibles! Haz click para agregar
+            </label>
+            <div *ngIf="!(songList|songsFilter:filter).length&&songList.length" class="alert alert-info text-center"
+                role="alert">¡No hay canciones que coincidan con <strong>{{searchSong.value}}</strong>!
+            </div>
             <li *ngFor="let song of songList|songsFilter:filter:sort|scrollDown:page"
                 (click)="$event.preventDefault();addSongToTailList(song)" [routerLink]="[base,attrList,song._id]"
                 routerLinkActive="active" [skipLocationChange]="false" title="Añadir a la cola"

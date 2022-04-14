@@ -1,5 +1,5 @@
 import { Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, Input, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { debounceTime, first, Observable, Subject, Subscription } from 'rxjs';
 import SongModel from 'src/app/models/song';
 import { MessagesService } from 'src/app/services/messages.service';
 import { SongService } from 'src/app/services/song.service';
@@ -21,25 +21,28 @@ export class CardAttrListComponent implements OnInit {
   filter: string = '';
   page: number = 2;
   attrActiveName: string = '';
+  songsList$!: Observable<SongModel[]>;
 
   constructor(
     private songService: SongService,
     private messService: MessagesService,
-    private cfr: ComponentFactoryResolver,) { }
-
+    private cfr: ComponentFactoryResolver,
+  ) { }
+  
   ngOnInit(): void {
+    this.songsList$ = this.songService.songsList$;
     this.subscriptions.push(this.inputChanged.pipe(debounceTime(200))
       .subscribe((value: string) => {
         this.filter = value;
       }));
   }
 
-  get songList(): SongModel[] {
-    // console.log('ejecuta')
-    return this.songService.songsList;
-    // return this.songService.songsList.filter((song :any) => song[this.attr]);
-    // return [...this.songService.songsList];
-  }
+  // get songList$(): SongModel[] {
+  //   // console.log('ejecuta')
+  //   return this.songService.songsList;
+  //   // return this.songService.songsList.filter((song :any) => song[this.attr]);
+  //   // return [...this.songService.songsList];
+  // }
 
   addSong(input: HTMLInputElement) {
     if (!input.value || !input.files) {
@@ -56,12 +59,16 @@ export class CardAttrListComponent implements OnInit {
 
   playAllSongs() {
     const filterPipe = new SongsAttrFilterPipe();
-    this.songService.addNewTailSong(filterPipe.transform(this.songList, this.attr, '', this.filter, this.sort));
+    this.songsList$.pipe(first()).subscribe((songsList: SongModel[]) => {
+      this.songService.addNewTailSong(filterPipe.transform(songsList, this.attr, '', this.filter, this.sort));
+    });
   }
 
   playAllRandom() {
     const filterPipe = new SongsAttrFilterPipe();
-    this.songService.addNewTailSong(filterPipe.transform(this.songList, this.attr, '', this.filter).sort(() => (Math.random() > 0.5) ? 1 : -1));
+    this.songsList$.pipe(first()).subscribe((songsList: SongModel[]) => {
+      this.songService.addNewTailSong(filterPipe.transform(songsList, this.attr, '', this.filter).sort(() => (Math.random() > 0.5) ? 1 : -1));
+    });
   }
 
   changeSortList(sort: string) {

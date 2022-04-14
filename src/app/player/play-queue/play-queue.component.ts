@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { debounceTime, first, Subject, Subscription } from 'rxjs';
 import NextSong from 'src/app/models/nextSong';
 import SongModel from 'src/app/models/song';
 import SongTail from 'src/app/models/songTail';
@@ -108,22 +108,25 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
     this.cleanSearchSong = this.cleanSearchSongRef.nativeElement;
     this.authService.getUser().subscribe({
       next: (user: UserModel) => {
-        const pt: SongTail[] = [];
         this.playerComponent.setVolume(user.volume);
         if (user.play_queue) {
-          user.play_queue.forEach((songId: string) => {
-            const song: SongModel = this.songService.songsList.filter((song) => song._id === songId)[0];
-            pt.push({ index: 0, song: song, isLoading: false });
-          })
-          this.resetPlayerTailIndexes(pt);
-          if (user.actual_index_song || user.actual_index_song === 0) {
-            // console.log(pt[user.actual_index_song])
-            if (pt[user.actual_index_song]) {
-              this.reproducirSong(pt[user.actual_index_song]);
+          this.songService.songsList$.pipe(first(songsList => songsList.length !== 0)).subscribe((songsList: SongModel[]) =>{
+            // console.log('Player queue init', user.play_queue)
+            const pt: SongTail[] = [];
+            user.play_queue.forEach((songId: string) => {
+              const song: SongModel = songsList.filter((song) => song._id === songId)[0];
+              pt.push({ index: 0, song: song, isLoading: false });
+            });
+            this.resetPlayerTailIndexes(pt);
+            if (user.actual_index_song || user.actual_index_song === 0) {
+              // console.log(pt[user.actual_index_song])
+              if (pt[user.actual_index_song]) {
+                this.reproducirSong(pt[user.actual_index_song]);
+              }
             }
-          }
-          this.playerTail = pt;
-          // console.log(this.playerTail)
+            this.playerTail = pt;
+            // console.log(this.playerTail)
+          });
         }
       },
       error: (error) => { console.error('Ocurrio un error: ' + error.error); }
@@ -169,6 +172,7 @@ export class PlayQueueComponent implements OnInit, AfterViewInit {
     this.playerTail = [...this.playerTail]; // subject.next or this
     this.resetPlayerTailIndexes(this.playerTail);
     this.reproducirSong(this.playerTail[0]);
+    this.saveTailList(); // Guarda la lista en la base de datos.
   }
 
   deleteSongTail(index: number) {

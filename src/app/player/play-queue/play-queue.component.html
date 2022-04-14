@@ -48,7 +48,7 @@
                 <div *ngIf="!playerTail.length" class="alert alert-info text-center" role="alert">¡No hay canciones en cola!
                 </div>
                 <div *ngIf="!(playerTail|tailSongsFilter:filter).length&&playerTail.length"
-                    class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con {{searchSongPlayer.value}}!
+                    class="alert alert-info text-center" role="alert">¡No hay canciones que coincidan con <strong>{{searchSongPlayer.value}}</strong>!
                 </div>
                 <li *ngFor="let song of playerTail|tailSongsFilter:filter|scrollDown:page" (click)="reproducirSong(song)" [class.active]="song.index==indexActualSong" title="Reproducir" class="list-group-item list-group-item-action cursor-pointer">
                     <div class="row">
